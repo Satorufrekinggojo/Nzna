@@ -5,7 +5,7 @@ const port = 3000;
 
 const animeData = {
   shonen: [
-    { anime: "onepiece", videoLink: "http://tinyurl.com/28hsjzz4" },
+    { anime: "onepiece", videoLink: "https://youtu.be/mZsPXkbGVKk?si=7_ZEaX8_ffRxySZs" },
 // add more like this
 
 
