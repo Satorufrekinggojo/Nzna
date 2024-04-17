@@ -6,12 +6,12 @@ module.exports = {
   config: {
     name: "gemini",
     version: "1.0",
-    author: "Charlie",
+    author: "rehat--",
     countDown: 5,
     role: 0,
     longDescription: { en: "Artificial Intelligence Google Gemini" },
     guide: { en: "{pn} <query>" },
-    category: "𝗔𝗜",
+    category: "ai",
   },
   clearHistory: function () {
     global.GoatBot.onReply.clear();
@@ -50,7 +50,7 @@ module.exports = {
       let imageUrls = result.imageUrls;
 
       let replyOptions = {
-        body: `🗨 | 𝙶𝚘𝚘𝚐𝚕𝚎 𝙱𝚊𝚛𝚍 | ━━━━━━━━━━━━━━━━\n${content}\n━━━━━━━━━━━━━━━━`, // Adding custom header and footer
+        body: content,
       };
 
       if (Array.isArray(imageUrls) && imageUrls.length > 0) {
@@ -105,7 +105,7 @@ module.exports = {
 
       let content = response.data.message;
       let replyOptions = {
-        body: `🗨 | 𝙶𝚘𝚘𝚐𝚕𝚎 𝙱𝚊𝚛𝚍 | ━━━━━━━━━━━━━━━━\n${content}\n━━━━━━━━━━━━━━━━`, // Adding custom header and footer
+        body: content,
       };
 
       const imageUrls = response.data.imageUrls;
@@ -115,7 +115,6 @@ module.exports = {
         if (!fs.existsSync(`${__dirname}/cache`)) {
           fs.mkdirSync(`${__dirname}/cache`);
         }
-
         for (let i = 0; i < imageUrls.length; i++) {
           const imageUrl = imageUrls[i];
           const imagePath = `${__dirname}/cache/image` + (i + 1) + ".png";
@@ -131,10 +130,8 @@ module.exports = {
             message.reply('An error occurred.');
           }
         }
-
         replyOptions.attachment = imageStreams;
       }
-
       message.reply(replyOptions, (err, info) => {
         if (!err) {
           global.GoatBot.onReply.set(info.messageID, {
