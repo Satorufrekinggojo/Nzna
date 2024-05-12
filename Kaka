@@ -1,0 +1,60 @@
+const fs = require("fs-extra");
+const axios = require("axios");
+const path = require("path");
+
+const cookie = "1BHfPxSALODcSLaRygB4TvrFciFjShTN4OWYpRygQa0wOOr3GLnN6ocjwuLEwAyj83VHwjmfbvSLoQfH865ybVfIqgGN4QEyKPC02VfA3rKPz4SYXHrWP1NBIG-GwPeRAD0OVq5Mjnbu75PDHdOLlGebwQIsSnUcfDTT4yybTe_6JjVg0uMyAnx6vazjdNIq5J1fGQW0AD4FjNf4MkMnHiQ"; // Enter _U value.
+const auth = "FABiBBRaTOJILtFsMkpLVWSG6AN6C/svRwNmAAAEgAAACJe+SfZ4NHZnIARvO+WcSbrv9c/fWXywWawVt80YpGIWqagfJJbwjJZDInw5WKQeyCtStCa8SYRV8QIcv4JXuNklpCxnHhit8RZXepB87O9YuOqg14BHgxEs9viO5TtSUVzoUT2ILhcPUk2RthIMflGCHgVCB0I6UJExI3EmNfx1U1qlSli8GHK1uNep8Wu148SA1SQI8C/hAWGa6XsTXu8F1aX+JynVQp6v28YYpPMQTGM0gh/4Z/zwXfS3lhOJV9QNcxY6OtjGownIglF+QgyiUxsLMo+FuXbuL2OlEWR/yx0u4V/mgVGiTPbERVfAO4ttzaVj4CJ7l9Thb/Bwfy9yJ3dCUGQ1b0ILh2e5cwGMUKxHNMWWETsRboMzEimsdY+TIxmNLxLFgz0q8IoCVk/7jN+hXQ4efdOtrDsgrYfvLfrn1HSzs+lFlKlIoO2SOLCAsRQIPNNvlMnmaEMumCjT2fWQMknmKM7Tz3PJN+285DSwyjS15VSjsEiDgRQERLvsupyvfQBiKcgxQSx2KxLSOTEW33g6kiy+CsV7cqosOs8T2XWWbMXhxZedZTuNY/2Y/H057gbwA/kHOPUkPmGJsz7lngzG2ZtXadyuJVSxdbm7NbbIgpRJP3KPud4BTQWHkKUTuvWMSo8S6xzdvtJ74acUHJ7kzq2JoxCadD1epaEFm3ZrEsBCDpSf20K/ZdqntUvn8xbDt71bw+G7tpJhBuk11LiPuedQ0/nNH0N+jmmJVZx6uAFbsRKr1acVjxcANbivCJplUaccsM1380wDldY1h11GShnWXTUtF84DjftlcFLCjAbxBiEUog9DC1D3MHTdox75fmsY7aaKSQW/9G/Q/piPjI1T+JI0IgozehByZitBWeQ4ZPqC3A+IYKp/E0myy2wtzdEQpVgk1NQKVDhxgTc6A78JX09O/LIvz2vkNWjMoFvXKj4k7cwQOCM3bFDfd7oZOaoaoD2oly+LPBFN7nUDNgsh4sYqYFpXtvRfiBgLsuMm3yBYBDchPPoxAwOj7Xs8GkmtYlUVdZRo/iqtCo6KdHvb/7kvDchMnXw2MXAsEvZmM8LNFfbfhiCLUdycQO43f5Ox1QIv/T6Mr+oDVGUIs99Mxkl1il/3Oe4E3bw/jy3Z1X/4lYfYmIG6MQxYLsWrz7wWKGPeFDh84wewwy4SRAHh+cbCTpNSKC5X1H7MAce5vRGdUidORL7Ia3a2lxeobB1lVydP+vnboQjm/hmIHmTqycY9NbBnhY2X4/KYwBUIXdkMbvXZEzeI57ySvaU0fXh7c7TLoRkNZD2a8JfriKnbDBSBj1oUCy72GSpxjZg0DJ3/9lsti1B1xvjQl18w4d88aVdYG9GraXq9GywHiVO2LBWXanktsekv2AEfkAVg/kSaSleVJqBUanPO5zCLuYMUAGIVWVqrDAyqIuVvG/WMBdL0n55T"; // Enter KievRPSSecAuth value.
+
+module.exports = {
+  config: {
+    name: "dalle",
+    version: "1.0",
+    author: "rehat--",
+    role: 0,
+    countDown: 0,
+    longDescription: {
+      en: "Generate unique and captivating images using DALL-E 3"
+    },
+    category: "ai",
+    guide: {
+      en: "{pn} <prompt>"
+    }
+  },
+
+  onStart: async function ({ api, event, args, message }) {
+    const prompt = args.join(" ");
+    if (!prompt) {
+      message.reply("Add something baka.");
+      return;
+    }
+    message.reply("Please wait...⏳");
+
+    try {
+      const res = await axios.post(`https://rehatdesu.xyz/api/imagine/dalle?cookie=${cookie}&auth=${auth}&prompt=${encodeURIComponent(prompt)}`);
+      const data = res.data.results.images;
+
+      if (!data || data.length === 0) {
+        message.reply("Redirect failed! Most probably bad prompt.");
+        return;
+      }
+
+      const imgData = [];
+      for (let i = 0; i < Math.min(4, data.length); i++) {
+        const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
+        const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
+        await fs.outputFile(imgPath, imgResponse.data);
+        imgData.push(fs.createReadStream(imgPath));
+      }
+
+      await api.sendMessage({
+        attachment: imgData,
+      }, event.threadID, event.messageID);
+
+    } catch (error) {
+      console.error(error);
+      message.reply("Redirect failed! Most probably bad prompt.");
+    } finally {
+      await fs.remove(path.join(__dirname, 'cache'));
+    }
+  }
+}
