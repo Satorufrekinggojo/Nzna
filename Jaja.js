@@ -1,283 +1,60 @@
-
-
+const fs = require("fs-extra");
 const axios = require("axios");
-const fs = require("fs");
 const path = require("path");
 
-const cacheDir = path.join(__dirname, "cache");
-const waifuDataFile = path.join(__dirname, "waifu.json");
-const waifuStateFile = path.join(__dirname, "waifustate.json");
+const cookie = "1QS1EPmPfcMwQlspNL3C28ReDZdupLKh8MqR4aadbE6NlD0maSPQ43fV5Gl0KyTxMa_110FhacvgufhNGKcFNh2VQFqJq2-6FPxyroD7wXNQwGmD1LEvIaOXZRnRl0b1i_0hkJCaceK0ZvIdR0N3OjIt5GBWzFbYTSYqeuG-6L8Lg9AkjR1sRFsQ-rOOK1g1dGz9ABbkHrBxxD7jcINUsag"; // Enter _U value.
+const auth = "FABiBBRaTOJILtFsMkpLVWSG6AN6C/svRwNmAAAEgAAACAUoqtob6S/5IASJQnUrBN/RYD28ac4hI+7EtPvqYTwYjdkNMoDOQsHy6RKzXbxVGAB5z0QvMiCPshqJMJILAAmLG/M5LLVOJSpa5OBqc1slZGo/n24j/3Lh3yHFy1YOtujhU6eMAhXQAAoCIk8ves5dFNaTq9gbRSqRJ10/wzmj2wJmwymnVxVL4Yxgb5SblvRbS4G+FTPC6gqRYfNKxqZwRAo0ukSSe374QGVDSpXYdvZWBFHUAw6Sc9mfT9YLWGX9pMrn4oPGzNjZQgWYg+xSzzyTJTwKoJkl4HT8mW+KJV77onOZQ9ooq5kRaou/tWlQVUM7JQMmptF8WxZB7StsekMkBaNRcdfn1kM94pSRm0avmYXydlMmIRL6wg13mgUeuE8EzJSqbtz1Bq8BbV/vFjuBdDT9nRU4RhT4IX/3PdMK2YVMDWdMPoO6kHdPXbT8cmcINW7zDaNV+vZ6ug4Xtj/ClD7/VINDbzjBvjt43zkIWekafSDiff8sd2PTiGcie7aPxnqrCW9PXRpYS21/6I/BTtfm8adS0sgqnkY7a+A/blCVXGG4fE4BXQu9O/LNuMo7TJ9C5D6Ve9KIp4TX38KtLrHWvvTr4KsPWa88nagDMFZRbExHy+3T7Oeo6NfvCXso6YHXYYFnySUzHo7NDT1LASmTyfwaiMLkmcVXQCVrnSF6KSMP6sUXSf5jzhhGXDFwDZnWfHl/+v3wDvLc8Mv0QCLpQX4f+05d+csCcdGy509uDGjYGpaoWgHpciQXPIWOHCkzz1llBXbFaVcAhWD47kmYghB/1ByhPpuhYftdteBNKT3OyCeSyZaZgGqqngKjnL1dHCKPKvC8E6xjrsNJo1+zOFCrpWuRQ44VlfAve3FlFWnmz9MlGCz1dbJdCteLW53NJSRVp2H9ZQMiMUaz72cOpwIrEiZRkJztetHRuDydq/COx/OTWiju01BEHcWQcx1tFKiWSn52AFTdMDh0aDepvRZzz8ZYajtZD9WEOY6gg5/O210GMZtjg7GWp4ZbrdBa3h2rwf+3zWyecNGSq1FFENhU9HtzbRVtrqh1EzBckUd9Oa4A4TpTWghyE5tpaJolmimBgE+Ka2zj0FSrF+tuxGCxy9+kR0roq3ddCCWwB/xIw/zl+vtWi75ZQiTGFHzrkxhM9/kSJCFypn9YlOUh2VZ7nbHdiH9gaeBD9edNPW4wXk9HBlpkr00C2PanU9FiFFEHtJTIbWlvA1R7B/eFPJJaBQDFtBy2HYQ/WVgUwq2YMiIRN+6OBVORL57Etth9AzglrZqQEtHSax9A05QQ3lp/J8rrhNCQFJQL4jdn2oD4r5Bg15tpvGzuKTb0Nq4lBNDJ+xPSr1dgNOWHGoHdx0pYseDQE/9iY7ddgLVPwNF0xUgE4f7hANlnnXHDM3XTZCQUAI0IP29i31dHOnxsWxa0txEglCmP"; // Enter KievRPSSecAuth value.
 
 module.exports = {
-    threadStates: {},
-    intervalID: null,
-    config: {
-        name: "waifudex",
-        version: "2.0",
-        author: "Vex_kshitiz",
-        role: 0,
-        shortDescription: "Guess the waifu!",
-        longDescription: "Guess the waifu! and add it into your waifu collection",
-        category: "game",
-        guide: {
-            en: "{p}waifudex",
-        },
+  config: {
+    name: "dalle",
+    version: "1.0",
+    author: "rehat--",
+    role: 0,
+    countDown: 0,
+    longDescription: {
+      en: "Generate unique and captivating images using DALL-E 3"
     },
+    category: "ai",
+    guide: {
+      en: "{pn} <prompt>"
+    }
+  },
 
-    onStart: async function ({ api, event }) {
-        const threadID = event.threadID;
+  onStart: async function ({ api, event, args, message }) {
+    const prompt = args.join(" ");
+    if (!prompt) {
+      message.reply("Add something baka.");
+      return;
+    }
+    message.reply("Please wait...⏳");
 
-        let waifuStates = this.loadWaifuStates();
+    try {
+      const res = await axios.post(`https://rehatdesu.xyz/api/imagine/dalle?cookie=${cookie}&auth=${auth}&prompt=${encodeURIComponent(prompt)}`);
+      const data = res.data.results.images;
 
-        if (!waifuStates[threadID]) {
-            waifuStates[threadID] = { status: "off", repliedUsers: [] };
-            this.saveWaifuStates(waifuStates);
-        }
+      if (!data || data.length === 0) {
+        message.reply("Redirect failed! Most probably bad prompt.");
+        return;
+      }
 
-        const subCommand = event.body.split(' ')[1];
-        if (subCommand === 'top') {
-            await this.sendTopWaifuUsers(api, event);
-            return;
-        } else if (subCommand === 'list') {
-            await this.sendWaifuList(api, event);
-            return;
-        }
+      const imgData = [];
+      for (let i = 0; i < Math.min(4, data.length); i++) {
+        const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
+        const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
+        await fs.outputFile(imgPath, imgResponse.data);
+        imgData.push(fs.createReadStream(imgPath));
+      }
 
-        if (event.body.toLowerCase().includes("waifudex on")) {
-            waifuStates[threadID].status = "on";
-            this.saveWaifuStates(waifuStates);
-            api.sendMessage("Waifudex is now turned on.", event.threadID, event.messageID);
+      await api.sendMessage({
+        attachment: imgData,
+      }, event.threadID, event.messageID);
 
-            if (!this.intervalID) {
-                this.setRandomInterval(api, threadID);
-            }
-        } else if (event.body.toLowerCase().includes("waifudex off")) {
-            waifuStates[threadID].status = "off";
-            this.saveWaifuStates(waifuStates);
-            api.sendMessage("Waifudex is now turned off.", event.threadID, event.messageID);
-
-            clearInterval(this.intervalID);
-            this.intervalID = null;
-        }
-    },
-
-
-    setRandomInterval: async function (api, threadID) {
-        const getRandomInterval = () => {
-            const intervals = [5, 10, 15]; 
-            const randomIndex = Math.floor(Math.random() * intervals.length);
-            return intervals[randomIndex];
-        };
-
-        const sendWaifuImage = async () => {
-            await this.sendWaifu(api, threadID);
-            this.setRandomInterval(api, threadID); 
-        };
-
-        const randomInterval = getRandomInterval() * 60000;
-        this.intervalID = setTimeout(sendWaifuImage, randomInterval);
-    },
-
-    sendWaifu: async function (api, threadID) {
-        const waifuStates = this.loadWaifuStates();
-
-        if (waifuStates[threadID].status === "on") {
-            const characterData = await this.fetchCharacterData();
-            if (!characterData || !characterData.image) {
-                console.error("Error fetching waifu data");
-                return;
-            }
-
-            const { image, traits, tags, fullName, firstName } = characterData;
-
-            try {
-                const imagePath = path.join(cacheDir, "waifu_image.jpg");
-                const writer = fs.createWriteStream(imagePath);
-                const response = await axios.get(image, { responseType: "stream" });
-                response.data.pipe(writer);
-
-                writer.on("finish", async () => {
-                    const waifuBody = `Random waifu appeared\nGuess her name 𓃝!!`;
-
-                    const replyMessage = { body: waifuBody, attachment: fs.createReadStream(imagePath) };
-                    const sentMessage = await api.sendMessage(replyMessage, threadID);
-
-                    global.GoatBot.onReply.set(sentMessage.messageID, {
-                        commandName: this.config.name,
-                        messageID: sentMessage.messageID,
-                        correctAnswer: [fullName, firstName],
-                        repliedUsers: [], 
-                    });
-
-                    setTimeout(async () => {
-                        await api.unsendMessage(sentMessage.messageID);
-                    }, 70000); 
-                });
-            } catch (error) {
-                console.error("Error downloading and sending image:", error);
-            }
-        }
-    },
-
-    onReply: async function ({ api, event, Reply }) {
-        try {
-            if (!event || !Reply) return;
-            const userAnswer = event.body.trim().toLowerCase();
-            const correctAnswers = Reply.correctAnswer.map(name => name.toLowerCase());
-            const repliedUsers = Reply.repliedUsers || [];
-
-            if (repliedUsers.includes(event.senderID)) {
-                await api.sendMessage("Try again", event.threadID);
-                return;
-            }
-
-            if (correctAnswers.includes(userAnswer)) {
-                repliedUsers.push(event.senderID); 
-                Reply.repliedUsers = repliedUsers; 
-                global.GoatBot.onReply.set(Reply.messageID, Reply); 
-
-                await this.addWaifu(event.senderID, Reply.correctAnswer[0]);
-
-                await api.sendMessage("Correct answer! Waifu is added to your collection 🐥", event.threadID, event.messageID);
-
-                const waifuMessageID = Reply.messageID;
-                await api.unsendMessage(waifuMessageID);
-                await api.unsendMessage(event.messageID);
-            } else {
-                await api.sendMessage(`Oops! Wrong answer.\nKeep trying!`, event.threadID, event.messageID);
-            }
-        } catch (error) {
-            console.error("Error while handling user reply:", error);
-        }
-    },
-
-    fetchCharacterData: async function () {
-        try {
-            const response = await axios.get("https://waifu-dex-three.vercel.app/kshitiz");
-            return response.data;
-        } catch (error) {
-            console.error("Error in API", error);
-            return null;
-        }
-    },
-
-    loadWaifuStates: function () {
-        try {
-            const data = fs.readFileSync(waifuStateFile, "utf8");
-            return JSON.parse(data);
-        } catch (err) {
-            return {};
-        }
-    },
-
-    saveWaifuStates: function (states) {
-        fs.writeFileSync(waifuStateFile, JSON.stringify(states, null, 2));
-    },
-
-    addWaifu: async function (userID, waifuName) {
-        try {
-            let userWaifus = await this.getUserWaifus(userID);
-            if (!userWaifus) {
-                userWaifus = [];
-            }
-
-            const existingIndex = userWaifus.findIndex(name => name.toLowerCase() === waifuName.toLowerCase());
-            if (existingIndex !== -1) {
-                userWaifus[existingIndex] = waifuName;
-            } else {
-                userWaifus.push(waifuName);
-            }
-
-            await this.setUserWaifus(userID, userWaifus);
-        } catch (error) {
-            console.error("Error adding waifu.", error);
-        }
-    },
-
-    getUserWaifus: async function (userID) {
-        try {
-            const data = await fs.promises.readFile(waifuDataFile, "utf8");
-            const userWaifus = JSON.parse(data)[userID];
-            return userWaifus;
-        } catch (error) {
-            if (error.code === "ENOENT") {
-                await fs.promises.writeFile(waifuDataFile, "{}");
-                return null;
-            } else {
-                console.error("Error reading waifus:", error);
-                return null;
-            }
-        }
-    },
-
-    setUserWaifus: async function (userID, waifus) {
-        try {
-            const waifuData = await this.getWaifuData();
-            waifuData[userID] = waifus;
-            await fs.promises.writeFile(
-                waifuDataFile,
-                JSON.stringify(waifuData, null, 2),
-                "utf8"
-            );
-        } catch (error) {
-            console.error("Error setting waifus:", error);
-        }
-    },
-
-    getWaifuData: async function () {
-        try {
-            const data = await fs.promises.readFile(waifuDataFile, "utf8");
-            return JSON.parse(data);
-        } catch (error) {
-            console.error("Error reading waifu data:", error);
-            return {};
-        }
-    },
-
-    sendWaifuList: async function (api, event) {
-        const userID = event.senderID;
-        const userWaifus = await this.getUserWaifus(userID);
-        if (!userWaifus || userWaifus.length === 0) {
-            await api.sendMessage("Your waifu collection is empty 🐥", event.threadID, event.messageID);
-            return;
-        }
-
-        let waifusText = "List of your waifus:\n";
-        userWaifus.forEach((waifu, index) => {
-            waifusText += `${index + 1}. ${waifu}\n`;
-        });
-
-        await api.sendMessage(waifusText, event.threadID, event.messageID);
-    },
-
-    sendTopWaifuUsers: async function (api, event) {
-        const waifuData = await this.getWaifuData();
-        const usersWithWaifus = Object.entries(waifuData).map(([userID, waifus]) => ({
-            userID,
-            waifuCount: waifus.length,
-        }));
-
-        const topUsers = usersWithWaifus.sort((a, b) => b.waifuCount - a.waifuCount).slice(0, 5);
-        let topUsersText = "Waifu collection ranking:\n";
-
-        for (const user of topUsers) {
-            const username = await this.getUserName(user.userID, api);
-            if (username) {
-                topUsersText += `${username} - ${user.waifuCount} waifus\n`;
-            }
-        }
-
-        await api.sendMessage(topUsersText, event.threadID, event.messageID);
-    },
-
-    getUserName: async function (userID, api) {
-        try {
-            const userInfo = await api.getUserInfo(userID);
-            const username = userInfo[userID].name;
-            return username;
-        } catch (error) {
-            console.error("Error getting username:", error);
-            return null;
-        }
-    },
-};
+    } catch (error) {
+      console.error(error);
+      message.reply("Redirect failed! Most probably bad prompt.");
+    } finally {
+      await fs.remove(path.join(__dirname, 'cache'));
+    }
+  }
+}
