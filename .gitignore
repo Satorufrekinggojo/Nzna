@@ -84,15 +84,16 @@ module.exports = {
  ✧ocr ✧owners ✧clonevoice 
  ✧xgojo ✧zombie ✧ownerx 
  ✧prefix ✧qr ✧nn
- ✧fbaccount ✧system ✧rembg
- ✧home ✧support ✧muptime 
- ✧weather ✧emojimean ✧post
- ✧apimarket ✧device ✧theme 
- ✧tag ✧font ✧countryinfo 
- ✧botstats ✧calc
- ✧deldatabase ✧bday 
- ✧fbcover ✧pet ✧testjs 
- ✧antiout ✧ip 
+ ✧fbaccount ✧system 
+ ✧rembg ✧home ✧support 
+ ✧muptime ✧weather 
+ ✧emojimean ✧post
+ ✧apimarket ✧device
+ ✧theme ✧tag ✧font
+ ✧countryinfo ✧botstats 
+ ✧calc ✧deldatabase
+ ✧bday ✧fbcover ✧pet 
+ ✧testjs ✧antiout ✧ip 
  ✧appstore ✧devicetop
 ╰────────────◊
 
@@ -101,20 +102,24 @@ module.exports = {
  ✧choose ✧card ✧choose 
  ✧clown ✧coffee ✧dog 
  ✧drip ✧duck ✧egif ✧elon 
- ✧emojimix ✧emojistory ✧fact1 
- ✧flip ✧flirt ✧hack ✧impress 
- ✧inbox ✧joke2 ✧love 
- ✧lyricscard ✧mark ✧married 
- ✧mlbbstalk ✧mpn ✧myfact 
- ✧myquote ✧myquote2 ✧nokia 
- ✧notify ✧obama ✧pair4 
- ✧pickuplines ✧propose ✧quote 
- ✧quotes ✧randomcatname ✧rip
- ✧rizz ✧sad ✧spiderman ✧anya 
- ✧kiss2 ✧meme ✧taylorquote ✧tes 
- ✧train ✧ugly ✧unforgivable 
- ✧wifey ✧wishcard ✧bored 
- ✧content ✧genshin ✧hell✧joke 
+ ✧emojimix ✧emojistory 
+ ✧fact1 ✧flip ✧flirt
+ ✧hack ✧impress ✧inbox 
+ ✧joke2 ✧love ✧lyricscard 
+ ✧mark ✧married ✧mlbbstalk 
+ ✧mpn ✧myfact ✧myquote 
+ ✧myquote2 ✧nokia ✧notify 
+ ✧obama ✧pair4 ✧pickuplines 
+ ✧propose ✧quote ✧quotes 
+ ✧randomcatname ✧rip
+ ✧rizz ✧sad ✧spiderman 
+ ✧anya ✧kiss2 ✧meme 
+ ✧taylorquote ✧tes 
+ ✧train ✧ugly 
+ ✧unforgivable ✧wifey 
+ ✧wishcard ✧bored 
+ ✧content ✧genshin 
+ ✧hell ✧joke 
 ╰────────────◊
 
 ╭──『 𝗚𝗔𝗠𝗘  』
@@ -297,7 +302,7 @@ module.exports = {
  ✧mistral ✧nemo ✧roast 
  ✧snoop ✧summarize ✧zoro 
  ✧teach ✧beast ✧gpt4 ✧bby 
- ✧hinu ✧yamato ✧hello  ✧smsg
+ ✧hinu ✧yamato ✧hello ✧smsg
 ╰────────────◊
 
 ╭──『 𝗚𝗙𝗫 』
