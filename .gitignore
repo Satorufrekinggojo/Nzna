@@ -83,14 +83,16 @@ module.exports = {
  ✧qrcode ✧wish ✧namaj 
  ✧ocr ✧owners ✧clonevoice 
  ✧xgojo ✧zombie ✧ownerx 
- ✧prefix ✧qr ✧nn ✧fbaccount 
- ✧system ✧rembg ✧home 
- ✧support ✧muptime ✧weather 
- ✧emojimean ✧post ✧apimarket 
- ✧device ✧theme ✧tag ✧font
- ✧countryinfo ✧botstats ✧calc 
- ✧deldatabase ✧bday ✧fbcover 
- ✧pet ✧testjs ✧antiout ✧ip 
+ ✧prefix ✧qr ✧nn
+ ✧fbaccount ✧system ✧rembg
+ ✧home ✧support ✧muptime 
+ ✧weather ✧emojimean ✧post
+ ✧apimarket ✧device ✧theme 
+ ✧tag ✧font ✧countryinfo 
+ ✧botstats ✧calc
+ ✧deldatabase ✧bday 
+ ✧fbcover ✧pet ✧testjs 
+ ✧antiout ✧ip 
  ✧appstore ✧devicetop
 ╰────────────◊
 
@@ -120,17 +122,20 @@ module.exports = {
  ✧candycrush ✧daily 
  ✧dhbc ✧dice ✧tof
  ✧dicedash ✧frogjump 
- ✧guessactor ✧guessnumber 
- ✧memorygame ✧penalty
- ✧pixart ✧playcard 
- ✧pubgguess ✧riddle ✧sicbo 
- ✧fight ✧quiz ✧quizx
- ✧tictactoe ✧tod ✧ttt 
- ✧coinflip ✧tttv2 ✧tttvx 
+ ✧guessactor✧playcard 
+ ✧guessnumber ✧quizx
+ ✧memorygame 
+ ✧penalty ✧riddle 
+ ✧pixart ✧sicbo
+ ✧pubgguess ✧quiz
+ ✧fight ✧tictactoe 
+ ✧tod ✧ttt✧coinflip 
+ ✧tttv2 ✧tttvx 
  ✧uncrossable ✧wordguess
- ✧waifudex ✧worker ✧xcup 
- ✧slot ✧truthordare ✧country 
- ✧slot ✧fish ✧spellingbee
+ ✧worker ✧xcup 
+ ✧slot ✧truthordare 
+ ✧country ✧slot ✧fish 
+ ✧spellingbee
 ╰────────────◊
 
 ╭──『 𝗕𝗢𝗫-𝗖𝗛𝗔𝗧 』
@@ -193,8 +198,9 @@ module.exports = {
 ╭──『  𝗠𝗘𝗠𝗘  』
  ✧sciencememe ✧smeme 
  ✧buttslap ✧cry 
- ✧gname ✧programmingmeme 
- ✧trash ✧wanted
+ ✧gname ✧trash 
+ ✧wanted
+ ✧programmingmeme 
 ╰────────────◊
 
 ╭──『  𝗧𝗧𝗦  』
@@ -220,10 +226,11 @@ module.exports = {
  ✧bleach ✧jjk ✧manga ✧anime 
  ✧xenoz ✧animirror ✧mangadex 
  ✧quote2 ✧waifux ✧art 
- ✧animegirl ✧naruinfo ✧opinfo 
- ✧bleachinfo  ✧anistatus
- ✧alienrizz ✧aniblur 
- ✧aniedit ✧animetime ✧anivid 
+ ✧animegirl ✧naruinfo
+ ✧opinfo ✧bleachinfo  
+ ✧anistatus ✧alienrizz 
+ ✧aniblur ✧aniedit 
+ ✧animetime ✧anivid
  ✧twixtor ✧anipic
 ╰────────────◊
 
@@ -270,7 +277,8 @@ module.exports = {
  ✧pubgedit ✧ffedit ✧overlay 
  ✧youtube ✧ytb ✧alldl 
  ✧fb ✧getlink ✧insta2 
- ✧moviedl ✧pixels ✧song ✧video
+ ✧moviedl ✧pixels ✧song 
+ ✧video
 ╰────────────◊
 
 ╭───『 𝗟𝗢𝗩𝗘 』
@@ -319,7 +327,7 @@ module.exports = {
  ✧waifulist ✧waifutop
  ✧waifuinfo ✧waifutrade 
  ✧waifuinv  ✧waifupull 
- ✧waifusellall 
+ ✧waifudex ✧waifusellall
 ╰────────────◊
 
 ╭──『  𝗥𝗔𝗡𝗞  』
