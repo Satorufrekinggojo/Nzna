@@ -25,7 +25,7 @@ module.exports = {
     𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮 𝗔𝗜 𝗖𝗵𝗮𝘁𝗯𝗼𝘁
 ╚═══════════╝
 
-╭───『  𝗢𝗪𝗡𝗘𝗥  』
+╭──『  𝗢𝗪𝗡𝗘𝗥  』
  ✧adminonly ✧approved ✧backupdata
  ✧bin ✧bio ✧bot ✧spam
  ✧cmd ✧code ✧delete cmd
@@ -44,7 +44,7 @@ module.exports = {
  ✧w4 ✧resetprefix ✧setalias
 ╰────────────◊
 
-╭───『  𝗔𝗗𝗠𝗜𝗡  』
+╭──『  𝗔𝗗𝗠𝗜𝗡  』
  ✧block ✧leave ✧main ✧automaticaccept
  ✧usage ✧out ✧ping ✧addfile ✧autoget ✧chekjson
  ✧testgpt ✧delete ✧stats ✧admin list ✧testhtml
@@ -52,7 +52,7 @@ module.exports = {
  ✧shell ✧goatbotcommandcreate ✧undefined ✧example ✧goatmart ✧restart
 ╰────────────◊
 
-╭───『  𝗜𝗠𝗔𝗚𝗘  』
+╭──『  𝗜𝗠𝗔𝗚𝗘  』
  ✧affect ✧arrest ✧avatar
  ✧banner ✧batslap ✧blink
  ✧cdp3 ✧cdp4 ✧chad
@@ -65,7 +65,7 @@ module.exports = {
  ✧ws
 ╰────────────◊
 
-╭───『  𝗧𝗢𝗢𝗟'𝗦  』
+╭──『 𝗧𝗢𝗢𝗟'𝗦  』
  ✧fakechat ✧exerciseinfo ✧guide ✧memberlist ✧qrcode ✧wish
  ✧namaj ✧ocr ✧owners ✧clonevoice ✧xgojo ✧zombie
  ✧ownerx ✧prefix ✧qr ✧nn ✧fbaccount ✧system
@@ -75,7 +75,7 @@ module.exports = {
  ✧pet ✧testjs ✧antiout ✧ip ✧appstore ✧devicetop
 ╰────────────◊
 
-╭───『  𝗙𝗨𝗡  』
+╭──『  𝗙𝗨𝗡  』
  ✧ball ✧beauty ✧biden ✧cat
  ✧choose ✧card ✧choose ✧clown ✧coffee 
  ✧dog ✧drip ✧duck ✧egif ✧elon ✧emojimix
@@ -90,7 +90,7 @@ module.exports = {
  ✧genshin ✧hell ✧joke 
 ╰────────────◊
 
-╭───『  𝗚𝗔𝗠𝗘  』
+╭──『 𝗚𝗔𝗠𝗘  』
  ✧aniquiz ✧arkn ✧candycrush
  ✧daily ✧dhbc ✧dice ✧tof
  ✧dicedash ✧frogjump ✧guessactor
@@ -103,7 +103,7 @@ module.exports = {
  ✧country ✧slot ✧fish ✧spellingbee
 ╰────────────◊
 
-╭───『  𝗕𝗢𝗫-𝗖𝗛𝗔𝗧 』
+╭──『 𝗕𝗢𝗫-𝗖𝗛𝗔𝗧 』
  ✧adduser ✧admin ✧ads
  ✧all ✧antichangeinfobox ✧autosetname
  ✧badwords ✧ban ✧busy
@@ -114,7 +114,7 @@ module.exports = {
  ✧unsend ✧warn ✧spamban ✧spygc
 ╰────────────◊
 
-╭───『  𝗨𝗧𝗜𝗟𝗜𝗧𝗬  』
+╭──『 𝗨𝗧𝗜𝗟𝗜𝗧𝗬  』
  ✧age ✧album ✧amvquote
  ✧bibleverse ✧calculate ✧cmdstore
  ✧connectgc ✧image ✧imgbb
@@ -125,12 +125,12 @@ module.exports = {
  ✧glen ✧measure ✧tempmail ✧tg 
 ╰────────────◊
 
-╭───『  𝗙𝗨𝗡-𝟮 』
+╭──『 𝗙𝗨𝗡-𝟮 』
  ✧berojgar ✧cai ✧dance ✧fun
  ✧findgay ✧fun2 ✧mistake 
 ╰────────────◊
 
-╭───『  𝗨𝗧𝗜𝗟𝗜𝗧𝗬-𝟮  』
+╭──『 𝗨𝗧𝗜𝗟𝗜𝗧𝗬-𝟮  』
  ✧accept ✧avatar1 ✧bc
  ✧beshy ✧bintotext ✧calendar
  ✧cricket ✧evenbin ✧gmage
@@ -138,36 +138,36 @@ module.exports = {
  ✧requestmain ✧short
 ╰────────────◊
 
-╭───『  𝗜𝗡𝗙𝗢  』
+╭──『  𝗜𝗡𝗙𝗢  』
  ✧cbin ✧define ✧fbstalk
  ✧history ✧info ✧stalk
 ╰────────────◊
 
-╭───『  𝗙𝗢𝗢𝗧𝗕𝗔𝗟𝗟  』
+╭──『 𝗙𝗢𝗢𝗧𝗕𝗔𝗟𝗟  』
  ✧messi ✧neymar ✧ramos
  ✧ronaldo
 ╰────────────◊
 
-╭───『  𝗗𝗘𝗩𝗘𝗟𝗢𝗣𝗘𝗥  』
+╭──『  𝗗𝗘𝗩𝗘𝗟𝗢𝗣𝗘𝗥  』
  ✧scrape ✧whitelist ✧whitelistthread
 ╰────────────◊
 
-╭───『  𝗠𝗘𝗠𝗘  』
+╭──『  𝗠𝗘𝗠𝗘  』
  ✧sciencememe ✧smeme ✧buttslap
  ✧cry ✧gname
  ✧programmingmeme ✧trash ✧wanted
 ╰────────────◊
 
-╭───『  𝗧𝗧𝗦  』
+╭──『  𝗧𝗧𝗦  』
  ✧say  ✧t2s  ✧voice ✧memevoice
 ╰────────────◊
 
-╭───『  𝗦𝗧𝗨𝗗𝗬  』
+╭──『  𝗦𝗧𝗨𝗗𝗬  』
  ✧advice ✧dictionary ✧itunes
  ✧wiki ✧fact ✧motivation ✧motivation2
 ╰────────◊
 
-╭───『  𝗚𝗥𝗢𝗨𝗣  』
+╭──『  𝗚𝗥𝗢𝗨𝗣  』
  ✧spamkick ✧top ✧topxp
 ╰────────────◊
 
@@ -181,37 +181,37 @@ module.exports = {
  ✧animetime ✧anivid ✧twixtor ✧anipic
 ╰────────────◊
 
-╭───『 𝗡𝗢𝗡𝗘 𝗣𝗥𝗘𝗙𝗜𝗫  』
+╭──『 𝗡𝗢𝗡𝗘 𝗣𝗥𝗘𝗙𝗜𝗫  』
  ✧ara ✧beluga ✧fuck you
  ✧gojoo ✧groove ✧hi ✧sheesh
 ╰────────────◊
 
-╭───『  𝗘𝗖𝗢𝗡𝗢𝗠𝗬  』
+╭──『  𝗘𝗖𝗢𝗡𝗢𝗠𝗬  』
  ✧balance ✧money ✧quest ✧coin
  ✧richest ✧set✧bank ✧currequest 
 ╰────────────◊
 
-╭───『  𝗧𝗘𝗫𝗧𝗣𝗥𝗢  』
+╭──『  𝗧𝗘𝗫𝗧𝗣𝗥𝗢  』
   ✧bigtxt ✧botsay ✧blood ✧circuit
   ✧khaby ✧ronb ✧willsmith ✧quote3
 ╰────────────◊
 
-╭───『 𝗖𝗢𝗡𝗧𝗥𝗔𝗖𝗧 𝗔𝗗𝗠𝗜𝗡 』
+╭─『 𝗖𝗢𝗡𝗧𝗥𝗔𝗖𝗧 』
  ✧callad  ✧botgc 
  ✧supportgc
 ╰────────────◊
 
-╭───『  𝗠𝗨𝗦𝗜𝗖  』
+╭──『  𝗠𝗨𝗦𝗜𝗖  』
  ✧animesong ✧audio ✧media
  ✧sing ✧spotify ✧voicify
  ✧youtubex ✧axix 
 ╰────────────◊
 
-╭───『  𝗟𝗢𝗚𝗢  』
+╭──『  𝗟𝗢𝗚𝗢  』
  ✧cardinfo ✧cardinfo2 
 ╰────────────◊
 
-╭───『  𝗠𝗘𝗗𝗜𝗔 』
+╭──『  𝗠𝗘𝗗𝗜𝗔 』
  ✧autolink ✧chords ✧convert ✧getlink2
  ✧github ✧igdl ✧lv  ✧voice
  ✧lyrics ✧singx ✧tik 
@@ -231,7 +231,7 @@ module.exports = {
  ✧fbpost ✧fbreport ✧fbshare
 ╰────────────◊
 
-╭───『  𝗔𝗜 𝗖𝗛𝗔𝗧 』
+╭──『  𝗔𝗜 𝗖𝗛𝗔𝗧 』
  ✧ask ✧clips ✧gemini ✧geminiv2 ✧gen
  ✧gllama ✧gojo ✧gpt ✧hina ✧liner ✧mistral
  ✧nemo ✧roast ✧snoop ✧summarize
@@ -239,44 +239,43 @@ module.exports = {
  ✧hinu ✧yamato ✧hello  ✧smsg
 ╰────────────◊
 
-╭───『 𝗚𝗙𝗫 』
+╭──『 𝗚𝗙𝗫 』
  ✧gfx ✧gfx2 ✧gfx3
  ✧gfx4 ✧gfx5 ✧gfx6
 ╰────────────◊
 
-╭───『 𝗔𝗜-𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘𝗗 』
+╭──『 𝗔𝗜-𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘𝗗 』
  ✧prompt2 ✧imagejourney ✧dallex
  ✧imaginex ✧imagine ✧genx
  ✧niji ✧nijiz  
 ╰────────────◊
 
-╭───『 𝗣𝗢𝗞𝗘𝗠𝗢𝗡 』
+╭──『 𝗣𝗢𝗞𝗘𝗠𝗢𝗡 』
  ✧pokebot ✧pokeinfo 
  ✧pokechamps ✧pokedex ✧poketrade
 ╰────────────◊
 
-╭───『 𝗖𝗨𝗦𝗧𝗢𝗠 』
+╭──『 𝗖𝗨𝗦𝗧𝗢𝗠 』
  ✧setleave ✧setwelcome ✧shortcut
 ╰────────────◊
 
-╭───『  𝗪𝗔𝗜𝗙𝗨 𝗚𝗔𝗠𝗘 』
+╭──『 𝗪𝗔𝗜𝗙𝗨 𝗚𝗔𝗠𝗘 』
  ✧waifulist ✧waifutop
  ✧waifuinfo ✧waifutrade 
  ✧waifuinv ✧waifupull 
  ✧waifusellall ✧waifusell
 ╰────────────◊
 
-╭───『  𝗥𝗔𝗡𝗞  』
+╭──『  𝗥𝗔𝗡𝗞  』
  ✧customrankcard ✧rank ✧ranktop
  ✧rankup ✧ranking
 ╰────────────◊
 
-╔═══════════╗
-⇨ Total Cmds: [ 545 ]
-⇨ Type [ / help <cmd name> ]
-to learn the usage
-╚═══════════╝
- 𓃘 | 𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮`,
+━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
+join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
+
+⇒ Total: 481 commands
+⇒ Use /help <cmd> to get more information about a command and /helpx a ( to see a specific cmd)`,
       commandNotFound: "Command \"%1\" does not exist",
       getInfoCommand: "» Description: %2\n» Other names: %3\n» Other names in your group: %4\n» Version: %5\n» Role: %6\n» Time per command: %7s\n» Author: %8\n━━━  ❖  ━━━\n» Usage guide:\n%9\n━━━  ❖  ━━━\n» Notes:\n• The content inside <XXXXX> can be changed\n• The content inside [a|b|c] is a or b or c",
       onlyInfo: "━━━  ❖  ━━━\n│ Command name: %1\n│ Description: %2\n│ Other names: %3\n│ Other names in your group: %4\n│ Version: %5\n│ Role: %6\n│ Time per command: %7s\n│ Author: %8\n❖─────────────❖",
