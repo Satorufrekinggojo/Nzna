@@ -274,7 +274,7 @@ module.exports = {
 ━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
 join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
 
-⇒ Total: 481 commands
+⇒ Total: 546 commands
 ⇒ Use /help <cmd> to get more information about a command and /helpx a ( to see a specific cmd)`,
       commandNotFound: "Command \"%1\" does not exist",
       getInfoCommand: "» Description: %2\n» Other names: %3\n» Other names in your group: %4\n» Version: %5\n» Role: %6\n» Time per command: %7s\n» Author: %8\n━━━  ❖  ━━━\n» Usage guide:\n%9\n━━━  ❖  ━━━\n» Notes:\n• The content inside <XXXXX> can be changed\n• The content inside [a|b|c] is a or b or c",
