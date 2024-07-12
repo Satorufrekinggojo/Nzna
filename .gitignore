@@ -1,130 +1,415 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+const axios = require("axios");
+const path = require("path");
+const fs = require("fs-extra");
+const { getPrefix } = global.utils;
+const { commands, aliases } = global.GoatBot;
+const doNotDelete = null;
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+module.exports = {
+  config: {
+    name: "help",
+    version: "1.0",
+    author: "NTKhang | Rehat86",
+    countDown: 5,
+    role: 0,
+    category: "info",
+    guide: {
+      en: "{pn} [empty or <command name>]"
+    },
+    priority: 1
+  },
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+  langs: {
+    en: {
+      help: `╔═══════════╗
+    𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮 𝗔𝗜 𝗖𝗵𝗮𝘁𝗯𝗼𝘁
+╚═══════════╝
+╭───『  𝗢𝗪𝗡𝗘𝗥  』
+ ✧adminonly ✧approved ✧backupdata
+ ✧bin ✧bio ✧bot ✧spam
+ ✧cmd ✧code ✧delete cmd
+ ✧devonly ✧edit ✧edit3
+ ✧edit4 ✧edit5 ✧edit6
+ ✧edit8 ✧editx ✧event
+ ✧file ✧getfbstate ✧hubble
+ ✧ignoreonlyad ✧ignoreonlyadbox ✧jsontomongodb
+ ✧jsontosqlite ✧listbox ✧loadconfig
+ ✧notice ✧notification ✧owner
+ ✧owner2 ✧respect ✧setavt
+ ✧setlang ✧setrankup ✧thread
+ ✧up ✧update ✧upt
+ ✧upt2 ✧upt3 ✧user
+ ✧vex ✧vip ✧w
+ ✧w4 ✧resetprefix ✧setalias
+╰────────────◊
+╭───『  𝗔𝗗𝗠𝗜𝗡  』
+ ✧block ✧leave ✧main ✧automaticaccept
+ ✧usage ✧out ✧ping ✧addfile ✧autoget ✧chekjson
+ ✧testgpt ✧delete ✧stats ✧admin list ✧testhtml
+ ✧uptime ✧uptime2 ✧autoseen ✧clean ✧eval ✧join
+ ✧shell ✧goatbotcommandcreate ✧undefined ✧example ✧goatmart ✧restart
+╰────────────◊
+╭───『  𝗜𝗠𝗔𝗚𝗘  』
+ ✧affect ✧arrest ✧avatar
+ ✧banner ✧batslap ✧blink
+ ✧cdp3 ✧cdp4 ✧chad
+ ✧coupledp ✧cover ✧cover2
+ ✧ephoto ✧giphy ✧horror
+ ✧imgsearch ✧imgur ✧link
+ ✧mpanel ✧pin ✧pr
+ ✧profile ✧prompt ✧sorthelp
+ ✧spy ✧template ✧trigger
+ ✧ws
+╰────────────◊
+╭───『  𝗧𝗢𝗢𝗟'𝗦  』
+ ✧fakechat ✧exerciseinfo ✧guide ✧memberlist ✧qrcode ✧wish
+ ✧namaj ✧ocr ✧owners ✧clonevoice ✧xgojo ✧zombie
+ ✧ownerx ✧prefix ✧qr ✧nn ✧fbaccount ✧system
+ ✧rembg ✧home ✧support ✧muptime ✧weather ✧emojimean
+ ✧post ✧apimarket ✧device ✧theme ✧tag ✧font ✧countryinfo
+ ✧botstats ✧calc ✧deldatabase ✧bday ✧fbcover
+ ✧pet ✧testjs ✧antiout ✧ip ✧appstore ✧devicetop
+╰────────────◊
+╭───『  𝗙𝗨𝗡  』
+ ✧ball ✧beauty ✧biden ✧cat
+ ✧choose ✧card ✧choose ✧clown ✧coffee 
+ ✧dog ✧drip ✧duck ✧egif ✧elon ✧emojimix
+ ✧emojistory ✧fact1 ✧flip ✧flirt
+ ✧hack ✧impress ✧inbox ✧joke2 ✧love ✧lyricscard ✧mark ✧married 
+ ✧mlbbstalk ✧mpn ✧myfact ✧myquote
+ ✧myquote2  ✧nokia ✧notify ✧obama ✧pair4 ✧pickuplines 
+ ✧propose ✧quote ✧quotes ✧randomcatname  ✧rip
+ ✧rizz ✧sad ✧spiderman ✧anya ✧kiss2 ✧meme
+ ✧taylorquote ✧tes  ✧train ✧ugly ✧unforgivable 
+ ✧wifey ✧wishcard ✧bored ✧content
+ ✧genshin ✧hell ✧joke 
+╰────────────◊
+╭───『  𝗚𝗔𝗠𝗘  』
+ ✧aniquiz ✧arkn ✧candycrush
+ ✧daily ✧dhbc ✧dice ✧tof
+ ✧dicedash ✧frogjump ✧guessactor
+ ✧guessnumber ✧memorygame ✧penalty
+ ✧pixart ✧playcard ✧pubgguess
+ ✧riddle ✧sdxl ✧sicbo ✧fight ✧quiz ✧quizx
+ ✧tictactoe ✧tod ✧ttt ✧coinflip
+ ✧tttv2 ✧tttvx ✧uncrossable ✧wordguess
+ ✧waifudex ✧worker ✧xcup ✧slot ✧truthordare
+ ✧country ✧slot ✧fish ✧spellingbee
+╰────────────◊
+╭───『  𝗕𝗢𝗫-𝗖𝗛𝗔𝗧 』
+ ✧adduser ✧admin ✧ads
+ ✧all ✧antichangeinfobox ✧autosetname
+ ✧badwords ✧ban ✧busy
+ ✧count ✧filteruser ✧gay
+ ✧kick ✧membercount ✧menu
+ ✧nncheck ✧onlyadminbox ✧refresh
+ ✧rules ✧sendnoti ✧setname
+ ✧unsend ✧warn ✧spamban ✧spygc
+╰────────────◊
+╭───『  𝗨𝗧𝗜𝗟𝗜𝗧𝗬  』
+ ✧age ✧album ✧amvquote
+ ✧bibleverse ✧calculate ✧cmdstore
+ ✧connectgc ✧image ✧imgbb
+ ✧inf ✧ipshow ✧math
+ ✧monitor ✧note ✧sendwebhook ✧translate
+ ✧upscaleai ✧v2a ✧view
+ ✧word ✧smg ✧ss ✧ss2
+ ✧glen ✧measure ✧tempmail ✧tg 
+╰────────────◊
+╭───『  𝗙𝗨𝗡-𝟮 』
+ ✧berojgar ✧cai ✧dance ✧fun
+ ✧findgay ✧fun2 ✧mistake 
+╰────────────◊
+╭───『  𝗨𝗧𝗜𝗟𝗜𝗧𝗬-𝟮  』
+ ✧accept ✧avatar1 ✧bc
+ ✧beshy ✧bintotext ✧calendar
+ ✧cricket ✧evenbin ✧gmage
+ ✧google-search ✧pastebin ✧reminder
+ ✧requestmain ✧short
+╰────────────◊
+╭───『  𝗜𝗡𝗙𝗢  』
+ ✧cbin ✧define ✧fbstalk
+ ✧history ✧info ✧stalk
+╰────────────◊
+╭───『  𝗙𝗢𝗢𝗧𝗕𝗔𝗟𝗟  』
+ ✧messi ✧neymar ✧ramos
+ ✧ronaldo
+╰────────────◊
+╭───『  𝗗𝗘𝗩𝗘𝗟𝗢𝗣𝗘𝗥  』
+ ✧scrape ✧whitelist ✧whitelistthread
+╰────────────◊
+╭───『  𝗠𝗘𝗠𝗘  』
+ ✧sciencememe ✧smeme ✧buttslap
+ ✧cry ✧gname
+ ✧programmingmeme ✧trash ✧wanted
+╰────────────◊
+╭───『  𝗧𝗧𝗦  』
+ ✧say  ✧t2s  ✧voice ✧memevoice
+╰────────────◊
+╭───『  𝗦𝗧𝗨𝗗𝗬  』
+ ✧advice ✧dictionary ✧itunes
+ ✧wiki ✧fact ✧motivation ✧motivation2
+╰────────◊
+╭───『  𝗚𝗥𝗢𝗨𝗣  』
+ ✧spamkick ✧top ✧topxp
+╰────────────◊
+╭───『  𝗔𝗡𝗜𝗠𝗘 』
+ ✧anigif ✧animeinfo ✧animequotes ✧aniwatch
+ ✧animetrend ✧anitrace ✧anivoice ✧one-piece
+ ✧bleach ✧jjk ✧manga ✧anime ✧xenoz ✧animirror
+ ✧mangadex ✧quote2 ✧waifux ✧art ✧animegirl
+ ✧naruinfo ✧opinfo ✧bleachinfo  ✧anistatus
+ ✧alienrizz ✧aniblur ✧aniedit  
+ ✧animetime ✧anivid ✧twixtor ✧anipic
+╰────────────◊
+╭───『 𝗡𝗢𝗡𝗘 𝗣𝗥𝗘𝗙𝗜𝗫  』
+ ✧ara ✧beluga ✧fuck you
+ ✧gojoo ✧groove ✧hi ✧sheesh
+╰────────────◊
+╭───『  𝗘𝗖𝗢𝗡𝗢𝗠𝗬  』
+ ✧balance ✧money ✧quest ✧coin
+ ✧richest ✧set✧bank ✧currequest 
+╰────────────◊
+╭───『  𝗧𝗘𝗫𝗧𝗣𝗥𝗢  』
+  ✧bigtxt ✧botsay ✧blood ✧circuit
+  ✧khaby ✧ronb ✧willsmith ✧quote3
+╰────────────◊
+╭───『 𝗖𝗢𝗡𝗧𝗥𝗔𝗖𝗧 𝗔𝗗𝗠𝗜𝗡 』
+ ✧callad  ✧botgc 
+ ✧supportgc
+╰────────────◊
+╭───『  𝗠𝗨𝗦𝗜𝗖  』
+ ✧animesong ✧audio ✧media
+ ✧sing ✧spotify ✧voicify
+ ✧youtubex ✧axix 
+╰────────────◊
+╭───『  𝗟𝗢𝗚𝗢  』
+ ✧cardinfo ✧cardinfo2 
+╰────────────◊
+╭───『  𝗠𝗘𝗗𝗜𝗔 』
+ ✧autolink ✧chords ✧convert ✧getlink2
+ ✧github ✧igdl ✧lv  ✧voice
+ ✧lyrics ✧singx ✧tik 
+ ✧videofb ✧anya2 ✧insta
+ ✧collab ✧tiktok ✧pmvd ✧pubgedit ✧ffedit
+ ✧overlay ✧youtube ✧ytb
+ ✧alldl ✧fb ✧getlink ✧insta2
+ ✧moviedl ✧pixels ✧song ✧video
+╰────────────◊
+╭───『 𝗟𝗢𝗩𝗘 』
+ ✧cdp ✧kiss ✧pair2 
+ ✧pair3 ✧ship ✧us ✧cdp2
+╰────────────◊
+╭───『  𝗦𝗢𝗖𝗜𝗔𝗟  』
+ ✧fbpost ✧fbreport ✧fbshare
+╰────────────◊
+╭───『  𝗔𝗜 𝗖𝗛𝗔𝗧 』
+ ✧ask ✧clips ✧gemini ✧geminiv2 ✧gen
+ ✧gllama ✧gojo ✧gpt ✧hina ✧liner ✧mistral
+ ✧nemo ✧roast ✧snoop ✧summarize
+ ✧zoro ✧teach ✧beast ✧gpt4 ✧bby 
+ ✧hinu ✧yamato ✧hello  ✧smsg
+╰────────────◊
+╭───『 𝗚𝗙𝗫 』
+ ✧gfx ✧gfx2 ✧gfx3
+ ✧gfx4 ✧gfx5 ✧gfx6
+╰────────────◊
+╭───『 𝗔𝗜-𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘𝗗 』
+ ✧prompt2 ✧imagejourney ✧dallex
+ ✧imaginex ✧imagine ✧genx
+ ✧niji ✧nijiz  
+╰────────────◊
+╭───『 𝗣𝗢𝗞𝗘𝗠𝗢𝗡 』
+ ✧pokebot ✧pokeinfo 
+ ✧pokechamps ✧pokedex ✧poketrade
+╰────────────◊
+╭───『 𝗖𝗨𝗦𝗧𝗢𝗠 』
+ ✧setleave ✧setwelcome ✧shortcut
+╰────────────◊
+╭───『  𝗪𝗔𝗜𝗙𝗨 𝗚𝗔𝗠𝗘 』
+ ✧waifulist ✧waifutop
+ ✧waifuinfo ✧waifutrade 
+ ✧waifuinv ✧waifupull 
+ ✧waifusellall ✧waifusell
+╰────────────◊
+╭───『  𝗥𝗔𝗡𝗞  』
+ ✧customrankcard ✧rank ✧ranktop
+ ✧rankup ✧ranking
+╰────────────◊
+╔═══════════╗
+⇨ Total Cmds: [ 545 ]
+⇨ Type [ / help <cmd name> ]
+to learn the usage
+╚═══════════╝
+ 𓃘 | 𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮`,
+      commandNotFound: "Command \"%1\" does not exist",
+      getInfoCommand: "» Description: %2\n» Other names: %3\n» Other names in your group: %4\n» Version: %5\n» Role: %6\n» Time per command: %7s\n» Author: %8\n━━━  ❖  ━━━\n» Usage guide:\n%9\n━━━  ❖  ━━━\n» Notes:\n• The content inside <XXXXX> can be changed\n• The content inside [a|b|c] is a or b or c",
+      onlyInfo: "━━━  ❖  ━━━\n│ Command name: %1\n│ Description: %2\n│ Other names: %3\n│ Other names in your group: %4\n│ Version: %5\n│ Role: %6\n│ Time per command: %7s\n│ Author: %8\n❖─────────────❖",
+      onlyUsage: "❖── USAGE ────❖\n│%1\n❖─────────────❖",
+      onlyAlias: "❖── ALIAS ────❖\n│ Other names: %1\n│ Other names in your group: %2\n❖─────────────❖",
+      onlyRole: "❖── ROLE ────❖\n│%1\n❖─────────────❖",
+      doNotHave: "Do not have",
+      roleText0: "0 (All users)",
+      roleText1: "1 (Group administrators)",
+      roleText2: "2 (Admin bot)",
+      roleText0setRole: "0 (set role, all users)",
+      roleText1setRole: "1 (set role, group administrators)",
+      pageNotFound: "Page %1 does not exist"
+    }
+  },
 
-# Directory for instrumented libs generated by jscoverage/JSCover
-lib-cov
+  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData}) {
 
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
 
-# nyc test coverage
-.nyc_output
+    const langCode = await threadsData.get(event.threadID, "data.lang") || global.GoatBot.config.language;
+    let customLang = {};
+    const pathCustomLang = path.join(__dirname, "..", "..", "languages", "cmds", `${langCode}.js`);
+    if (fs.existsSync(pathCustomLang))
+      customLang = require(pathCustomLang);
+    const { threadID } = event;
+    const threadData = await threadsData.get(threadID);
+    const prefix = getPrefix(threadID);
+    let sortHelp = threadData.settings.sortHelp || "name";
+    if (!["category", "name"].includes(sortHelp))
+      sortHelp = "name";
+    const commandName = (args[0] || "").toLowerCase();
+    const command = commands.get(commandName) || commands.get(aliases.get(commandName));
+    // ———————————————— LIST ALL COMMAND ——————————————— //
+    if (!command && !args[0] || !isNaN(args[0])) {
+      const arrayInfo = [];
+      let msg = "";
+      if (sortHelp == "name") {
+        const page = parseInt(args[0]) || 1;
+        const numberOfOnePage = 30;
+        for (const [name, value] of commands) {
+          if (value.config.role > 1 && role < value.config.role)
+            continue;
+          let describe = name;
+          let shortDescription;
+          const shortDescriptionCustomLang = customLang[name]?.shortDescription;
+          if (shortDescriptionCustomLang != undefined)
+            shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
+          else if (value.config.shortDescription)
+            shortDescription = checkLangObject(value.config.shortDescription, langCode);
+          if (shortDescription)
+            describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
+          arrayInfo.push({
+            data: describe,
+            priority: value.priority || 0
+          });
+        }
+        arrayInfo.sort((a, b) => a.data - b.data);
+        arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
+        const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
+        if (page < 1 || page > totalPage)
+          return message.reply(getLang("pageNotFound", page));
+        const returnArray = allPage[page - 1] || [];
+        const startNumber = (page - 1) * numberOfOnePage + 1;
+        msg += (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
+        await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
+      };
+    }
+    // ———————————— COMMAND DOES NOT EXIST ———————————— //
+    else if (!command && args[0]) {
+      return message.reply(getLang("commandNotFound", args[0]));
+    }
+    // ————————————————— INFO COMMAND ————————————————— //
+    else {
+      const formSendMessage = {};
+      const configCommand = command.config;
 
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
+      let guide = configCommand.guide?.[langCode] || configCommand.guide?.["en"];
+      if (guide == undefined)
+        guide = customLang[configCommand.name]?.guide?.[langCode] || customLang[configCommand.name]?.guide?.["en"];
 
-# Bower dependency directory (https://bower.io/)
-bower_components
+      guide = guide || {
+        body: ""
+      };
+      if (typeof guide == "string")
+        guide = { body: guide };
+      const guideBody = guide.body
+        .replace(/\{prefix\}|\{p\}/g, prefix)
+        .replace(/\{name\}|\{n\}/g, configCommand.name)
+        .replace(/\{pn\}/g, prefix + configCommand.name);
 
-# node-waf configuration
-.lock-wscript
+      const aliasesString = configCommand.aliases ? configCommand.aliases.join(", ") : getLang("doNotHave");
+      const aliasesThisGroup = threadData.data.aliases ? (threadData.data.aliases[configCommand.name] || []).join(", ") : getLang("doNotHave");
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+      let roleOfCommand = configCommand.role;
+      let roleIsSet = false;
+      if (threadData.data.setRole?.[configCommand.name]) {
+        roleOfCommand = threadData.data.setRole[configCommand.name];
+        roleIsSet = true;
+      }
 
-# Dependency directories
-node_modules/
-jspm_packages/
+      const roleText = roleOfCommand == 0 ?
+        (roleIsSet ? getLang("roleText0setRole") : getLang("roleText0")) :
+        roleOfCommand == 1 ?
+          (roleIsSet ? getLang("roleText1setRole") : getLang("roleText1")) :
+          getLang("roleText2");
 
-# Snowpack dependency directory (https://snowpack.dev/)
-web_modules/
+      const author = configCommand.author;
+      const descriptionCustomLang = customLang[configCommand.name]?.longDescription;
+      let description = checkLangObject(configCommand.longDescription, langCode);
+      if (description == undefined)
+        if (descriptionCustomLang != undefined)
+          description = checkLangObject(descriptionCustomLang, langCode);
+        else
+          description = getLang("doNotHave");
 
-# TypeScript cache
-*.tsbuildinfo
+      let sendWithAttachment = false;
 
-# Optional npm cache directory
-.npm
+      if (args[1]?.match(/^-g|guide|-u|usage$/)) {
+        formSendMessage.body = getLang("onlyUsage", guideBody.split("\n").join("\n"));
+        sendWithAttachment = true;
+      }
+      else if (args[1]?.match(/^-a|alias|aliase|aliases$/))
+        formSendMessage.body = getLang("onlyAlias", aliasesString, aliasesThisGroup);
+      else if (args[1]?.match(/^-r|role$/))
+        formSendMessage.body = getLang("onlyRole", roleText);
+      else if (args[1]?.match(/^-i|info$/))
+        formSendMessage.body = getLang("onlyInfo", configCommand.name, description, aliasesString, aliasesThisGroup, configCommand.version, roleText, configCommand.countDown || 1, author || "");
+      else {
+        formSendMessage.body = getLang("getInfoCommand", configCommand.name, description, aliasesString, aliasesThisGroup, configCommand.version, roleText, configCommand.countDown || 1, author || "", `${guideBody.split("\n").join("\n")}`);
+        sendWithAttachment = true;
+      }
 
-# Optional eslint cache
-.eslintcache
+      if (sendWithAttachment && guide.attachment) {
+        if (typeof guide.attachment == "object") {
+          formSendMessage.attachment = [];
+          for (const pathFile in guide.attachment) {
+            if (!fs.existsSync(pathFile)) {
+              const cutFullPath = pathFile.split("/").filter(item => item != "");
+              cutFullPath.pop();
+              for (let i = 0; i < cutFullPath.length; i++) {
+                const path = cutFullPath.slice(0, i + 1).join('/');
+                if (!fs.existsSync(path))
+                  fs.mkdirSync(path);
+              }
+              const getFile = await axios.get(guide.attachment[pathFile], { responseType: 'arraybuffer' });
+              fs.writeFileSync(pathFile, Buffer.from(getFile.data));
+            }
+            formSendMessage.attachment.push(fs.createReadStream(pathFile));
+          }
+        }
+      }
+      return message.reply(formSendMessage);
+    }
+  }
+};
 
-# Optional stylelint cache
-.stylelintcache
+function checkLangObject(data, langCode) {
+  if (typeof data == "string")
+    return data;
+  if (typeof data == "object" && !Array.isArray(data))
+    return data[langCode] || data.en || undefined;
+  return undefined;
+}
 
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
-
-# vuepress build output
-.vuepress/dist
-
-# vuepress v2.x temp and cache directory
-.temp
-.cache
-
-# Docusaurus cache and generated files
-.docusaurus
-
-# Serverless directories
-.serverless/
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
+function cropContent(content, max) {
+  if (content.length > max) {
+    content = content.slice(0, max - 3);
+    content = content + "...";
+  }
+  return content;
+}
