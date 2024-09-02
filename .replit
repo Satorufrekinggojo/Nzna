@@ -201,3 +201,35 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
             if (!fs.existsSync(pathFile)) {
               const cutFullPath = pathFile.split("/").filter(item => item != "");
               cutFullPath.pop();
+              for (let i = 0; i < cutFullPath.length; i++) {
+                const path = cutFullPath.slice(0, i + 1).join('/');
+                if (!fs.existsSync(path))
+                  fs.mkdirSync(path);
+              }
+              const getFile = await axios.get(guide.attachment[pathFile], { responseType: 'arraybuffer' });
+              fs.writeFileSync(pathFile, Buffer.from(getFile.data));
+            }
+            formSendMessage.attachment.push(fs.createReadStream(pathFile));
+          }
+        }
+      }
+      return message.reply(formSendMessage);
+    }
+  }
+};
+
+function checkLangObject(data, langCode) {
+  if (typeof data == "string")
+    return data;
+  if (typeof data == "object" && !Array.isArray(data))
+    return data[langCode] || data.en || undefined;
+  return undefined;
+}
+
+function cropContent(content, max) {
+  if (content.length > max) {
+    content = content.slice(0, max - 3);
+    content = content + "...";
+  }
+  return content;
+}
