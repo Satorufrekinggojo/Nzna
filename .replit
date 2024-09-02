@@ -9,12 +9,12 @@ module.exports = {
   config: {
     name: "help",
     version: "1.0",
-    author: "NTKhang | Rehat86",
+    author: "NTKhang | Rehat86 | Updated by Vincenzo",
     countDown: 5,
     role: 0,
     category: "info",
     guide: {
-      en: "{pn} [empty or <command name>] [-s <letter>]"
+      en: "{pn} [empty or <command name>] or {pn} -s [letter]"
     },
     priority: 1
   },
@@ -24,13 +24,13 @@ module.exports = {
       help: `╔═══════════╗
     𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮 𝗖𝗵𝗮𝘁𝗯𝗼𝘁
 ╚═══════════╝
-{commandList}
+
 
 ━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
 join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
 
-⇒ Total: {totalCommands} commands
-⇒ Use /help <cmd> to get more information about a command and /helpx a (to see a specific cmd)`,
+⇒ Total: 412 commands
+⇒ Use /help <cmd> to get more information about a command and /helpx a ( to see a specific cmd)`,
       commandNotFound: "Command \"%1\" does not exist",
       getInfoCommand: "» Description: %2\n» Other names: %3\n» Other names in your group: %4\n» Version: %5\n» Role: %6\n» Time per command: %7s\n» Author: %8\n━━━  ❖  ━━━\n» Usage guide:\n%9\n━━━  ❖  ━━━\n» Notes:\n• The content inside <XXXXX> can be changed\n• The content inside [a|b|c] is a or b or c",
       onlyInfo: "━━━  ❖  ━━━\n│ Command name: %1\n│ Description: %2\n│ Other names: %3\n│ Other names in your group: %4\n│ Version: %5\n│ Role: %6\n│ Time per command: %7s\n│ Author: %8\n❖─────────────❖",
@@ -43,7 +43,8 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       roleText2: "2 (Admin bot)",
       roleText0setRole: "0 (set role, all users)",
       roleText1setRole: "1 (set role, group administrators)",
-      pageNotFound: "Page %1 does not exist"
+      pageNotFound: "Page %1 does not exist",
+      commandList: "╭──『  %1 cmds 』\n%2╰────────────◊\nTotal (%1) cmds = %3"
     }
   },
 
@@ -62,16 +63,36 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
     const commandName = (args[0] || "").toLowerCase();
     const command = commands.get(commandName) || commands.get(aliases.get(commandName));
 
-    // ———————————————— LIST ALL COMMANDS BY LETTER ——————————————— //
-    if (args[0] && args[0].startsWith("-s")) {
-      const letter = args[0].substring(2).toLowerCase();
+    // ———————————————— LIST ALL COMMAND ——————————————— //
+    if (!command && (!args[0] || !isNaN(args[0]))) {
+      if (args[0] && args[0].startsWith("-s")) {
+        const letter = args[1] ? args[1].toLowerCase() : "";
+        if (!letter || letter.length !== 1)
+          return message.reply(`Please provide a single letter to filter the commands, e.g., -s a`);
+
+        const filteredCommands = [];
+        for (const [name, value] of commands) {
+          if (name.startsWith(letter) && (value.config.role <= role)) {
+            filteredCommands.push(name);
+          }
+        }
+
+        if (filteredCommands.length === 0)
+          return message.reply(`No commands found starting with "${letter.toUpperCase()}"`);
+
+        const formattedCommands = filteredCommands.join(" ✧");
+        const response = getLang("commandList", letter.toUpperCase(), `✧${formattedCommands}`, filteredCommands.length);
+        return message.reply(response);
+      }
+
       const arrayInfo = [];
       let msg = "";
-      const groupCommands = new Map();
-      for (const [name, value] of commands) {
-        if (value.config.role > 1 && role < value.config.role)
-          continue;
-        if (name.startsWith(letter)) {
+      if (sortHelp == "name") {
+        const page = parseInt(args[0]) || 1;
+        const numberOfOnePage = 30;
+        for (const [name, value] of commands) {
+          if (value.config.role > 1 && role < value.config.role)
+            continue;
           let describe = name;
           let shortDescription;
           const shortDescriptionCustomLang = customLang[name]?.shortDescription;
@@ -81,53 +102,21 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
             shortDescription = checkLangObject(value.config.shortDescription, langCode);
           if (shortDescription)
             describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
-          arrayInfo.push(describe);
+          arrayInfo.push({
+            data: describe,
+            priority: value.priority || 0
+          });
         }
-      }
-      if (arrayInfo.length > 0) {
-        msg += `╭──『  ${letter.toUpperCase()} cmds 』\n`;
-        msg += `✧${arrayInfo.join(" ✧")}\n`;
-        msg += `╰───────────◊\n`;
-        msg += `Total ${letter} cmds: ${arrayInfo.length}`;
-      } else {
-        msg += `No commands found starting with '${letter.toUpperCase()}'`;
-      }
-      return message.reply(msg);
-    }
-
-    // ———————————————— LIST ALL COMMAND ——————————————— //
-    if (!command && !args[0] || !isNaN(args[0])) {
-      const arrayInfo = [];
-      let msg = "";
-      const commandsByCategory = {};
-      const page = parseInt(args[0]) || 1;
-      const numberOfOnePage = 30;
-      for (const [name, value] of commands) {
-        if (value.config.role > 1 && role < value.config.role)
-          continue;
-        let describe = name;
-        let shortDescription;
-        const shortDescriptionCustomLang = customLang[name]?.shortDescription;
-        if (shortDescriptionCustomLang != undefined)
-          shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
-        else if (value.config.shortDescription)
-          shortDescription = checkLangObject(value.config.shortDescription, langCode);
-        if (shortDescription)
-          describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
-        arrayInfo.push({
-          data: describe,
-          priority: value.priority || 0
-        });
-      }
-      arrayInfo.sort((a, b) => a.data - b.data);
-      arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
-      const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
-      if (page < 1 || page > totalPage)
-        return message.reply(getLang("pageNotFound", page));
-      const returnArray = allPage[page - 1] || [];
-      const startNumber = (page - 1) * numberOfOnePage + 1;
-      msg += (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
-      await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
+        arrayInfo.sort((a, b) => a.data - b.data);
+        arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
+        const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
+        if (page < 1 || page > totalPage)
+          return message.reply(getLang("pageNotFound", page));
+        const returnArray = allPage[page - 1] || [];
+        const startNumber = (page - 1) * numberOfOnePage + 1;
+        msg += (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
+        await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
+      };
     }
     // ———————————— COMMAND DOES NOT EXIST ———————————— //
     else if (!command && args[0]) {
