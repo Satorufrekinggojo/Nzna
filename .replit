@@ -5,6 +5,14 @@ const { getPrefix } = global.utils;
 const { commands, aliases } = global.GoatBot;
 const doNotDelete = null;
 
+// Short help sorting configuration
+const sortHelpOptions = ["name", "category"];
+const defaultSortHelp = "name";
+
+function getCommandCategory(command) {
+  return command.config.category || 'default';
+}
+
 module.exports = {
   config: {
     name: "help",
@@ -26,297 +34,6 @@ module.exports = {
 ╚═══════════╝
 
 
-╭──『  𝗢𝗪𝗡𝗘𝗥  』
- ✧adminonly ✧approved 
- ✧backupdata ✧bin 
- ✧bio ✧bot ✧spam
- ✧cmd ✧code ✧deletecmd
- ✧devonly  ✧edit6
- ✧edit8 ✧editx ✧event
- ✧file ✧getfbstate 
- ✧hubble ✧ignoreonlyad 
- ✧ignoreonlyadbox 
- ✧jsontomongodb 
- ✧listbox ✧loadconfig
- ✧notice ✧notification
- ✧owner ✧owner2 ✧respect 
- ✧setavt ✧setlang 
- ✧setrankup ✧thread ✧up 
- ✧update ✧upt ✧upt2 ✧upt3 
- ✧user ✧vip ✧w
- ✧w4 ✧resetprefix ✧setalias
-╰────────────◊
-
-╭──『  𝗔𝗗𝗠𝗜𝗡  』
- ✧block ✧leave ✧main 
- ✧automaticaccept
- ✧usage ✧out ✧ping 
- ✧addfile ✧autoget 
- ✧chekjson ✧delete ✧stats 
- ✧adminlist ✧testhtml
- ✧uptime ✧uptime2 
- ✧autoseen ✧clean ✧eval 
- ✧join ✧shell 
- ✧goatbotcommandcreate 
- ✧example 
- ✧goatmart ✧restart
-╰────────────◊
-
-╭──『  𝗜𝗠𝗔𝗚𝗘  』
- ✧affect ✧arrest ✧avatar
- ✧banner ✧batslap ✧blink
- ✧Chad ✧coupledp ✧cover 
- ✧ephoto ✧giphy ✧horror
- ✧imgsearch ✧imgur ✧link
- ✧mpanel ✧pin ✧pr
- ✧profile ✧prompt 
- ✧sorthelp ✧spy
- ✧template ✧trigger
- ✧ws ✧cover2
-╰────────────◊
-
-╭──『 𝗧𝗢𝗢𝗟'𝗦  』
- ✧fakechat ✧memberlist 
- ✧qrcode ✧wish ✧namaj 
- ✧ocr ✧owners ✧clonevoice 
- ✧ownerx ✧prefix ✧qr ✧nn
- ✧fbaccount ✧system 
- ✧rembg ✧home ✧support 
- ✧muptime ✧weather 
- ✧emojimean ✧post
- ✧apimarket ✧device
- ✧theme ✧tag ✧font
- ✧countryinfo ✧botstats 
- ✧deldatabase ✧bday 
- ✧fbcover ✧ analytics
- ✧testjs ✧antiout ✧ip 
- ✧appstore ✧devicetop
-╰────────────◊
-
-╭──『  𝗙𝗨𝗡  』
- ✧ball ✧biden ✧cat
- ✧card ✧clown ✧drip 
- ✧duck ✧elon ✧emojimix 
- ✧emojistory ✧fact 
- ✧flirt ✧hack ✧impress 
- ✧inbox ✧joke2 ✧love 
- ✧mark ✧married ✧myfact 
- ✧myquote ✧nokia 
- ✧notify ✧obama 
- ✧propose ✧quote ✧quotes 
- ✧randomcatname ✧rip
- ✧rizz ✧sad ✧spiderman 
- ✧anya ✧kiss2 ✧meme 
- ✧taylorquote ✧tes 
- ✧train ✧wishcard 
- ✧content ✧hell ✧joke 
-╰────────────◊
-
-╭──『 𝗚𝗔𝗠𝗘  』
- ✧aniquiz ✧candycrush 
- ✧dhbc ✧dice ✧tof
- ✧dicedash ✧frogjump 
- ✧guessactor✧playcard 
- ✧guessnumber 
- ✧memorygame ✧daily 
- ✧penalty ✧riddle 
- ✧quiz ✧fight 
- ✧tictactoe ✧tod ✧ttt 
- ✧coinflip ✧tttv2
- ✧tttvx ✧uncrossable 
- ✧wordguess ✧worker
- ✧xcup ✧slot 
- ✧truthordare ✧country
- ✧slot ✧fish ✧goingmarry
-╰────────────◊
-
-╭──『 𝗕𝗢𝗫-𝗖𝗛𝗔𝗧 』
- ✧adduser ✧admin ✧ads
- ✧all ✧antichangeinfobox 
- ✧autosetname ✧badwords 
- ✧ban ✧busy ✧count 
- ✧filteruser ✧gay ✧kick 
- ✧membercount✧menu 
- ✧nncheck✧onlyadminbox 
- ✧refresh ✧rules 
- ✧sendnoti ✧setname
- ✧unsend ✧warn 
- ✧spamban ✧spygc
-╰────────────◊
-
-╭──『 𝗨𝗧𝗜𝗟𝗜𝗧𝗬  』
- ✧album ✧amvquote
- ✧bibleverse ✧cmdstore 
- ✧connectgc ✧image ✧imgbb 
- ✧inf ✧ipshow ✧monitor 
- ✧note ✧sendwebhook 
- ✧translate ✧upscaleai 
- ✧v2a ✧view ✧word ✧smg 
- ✧ss ✧tempmail ✧tg 
-╰────────────◊
-
-╭──『 𝗙𝗨𝗡-𝟮 』
- ✧berojgar  ✧dance 
- ✧fun ✧fun2 ✧cm
-╰────────────◊
-
-╭──『 𝗨𝗧𝗜𝗟𝗜𝗧𝗬-𝟮  』
- ✧accept ✧avatar1 ✧bc
- ✧calendar ✧cricket 
- ✧gmage ✧pastebin 
- ✧requestmain ✧short
-╰────────────◊
-
-╭──『  𝗜𝗡𝗙𝗢  』
- ✧cbin ✧info ✧stalk
-╰────────────◊
-
-╭──『 𝗙𝗢𝗢𝗧𝗕𝗔𝗟𝗟  』
- ✧messi ✧neymar ✧ramos
- ✧ronaldo
-╰────────────◊
-
-╭──『  𝗗𝗘𝗩𝗘𝗟𝗢𝗣𝗘𝗥  』
- ✧scrape ✧whitelist 
- ✧whitelistthread
-╰────────────◊
-
-╭──『  𝗠𝗘𝗠𝗘  』
- ✧sciencememe ✧smeme 
- ✧buttslap ✧cry 
- ✧gname ✧trash 
- ✧wanted
- ✧programmingmeme 
-╰────────────◊
-
-╭──『  𝗧𝗧𝗦  』
- ✧say  ✧anya2
-╰────────────◊
-
-╭──『  𝗦𝗧𝗨𝗗𝗬  』
- ✧advice ✧fact 
- ✧motivation 
- ✧motivation2
-╰────────◊
-
-╭──『  𝗚𝗥𝗢𝗨𝗣  』
- ✧spamkick ✧top ✧topxp
-╰────────────◊
-
-╭───『  𝗔𝗡𝗜𝗠𝗘 』
- ✧anigif ✧animeinfo 
- ✧animequotes ✧aniwatch
- ✧animetrend ✧anitrace
- ✧anivoice ✧one-piece
- ✧bleach ✧jjk ✧manga
- ✧anime ✧xenoz ✧mangadex
- ✧mangaread ✧quote2 
- ✧waifux ✧art ✧animegirl 
- ✧naruinfo ✧opinfo 
- ✧bleachinfo ✧anistatus 
- ✧aniblur ✧aniedit 
- ✧animetime ✧twixtor 
- ✧anipic
-╰────────────◊
-
-╭──『  𝗘𝗖𝗢𝗡𝗢𝗠𝗬  』
- ✧balance ✧money ✧resetbal
- ✧coin ✧richest ✧set
- ✧bank ✧currequest 
-╰────────────◊
-
-╭──『  𝗧𝗘𝗫𝗧𝗣𝗥𝗢  』
- ✧khaby ✧willsmith ✧quote3
-╰────────────◊
-
-╭─『 𝗖𝗢𝗡𝗧𝗥𝗔𝗖𝗧 』
- ✧callad  ✧botgc 
- ✧supportgc
-╰────────────◊
-
-╭──『  𝗠𝗨𝗦𝗜𝗖  』
- ✧animesong ✧audio 
- ✧media ✧sing ✧spotify 
- ✧voicify ✧youtubex 
-╰────────────◊
-
-╭──『  𝗟𝗢𝗚𝗢  』
- ✧cardinfo ✧cardinfo2 
-╰────────────◊
-
-╭──『  𝗠𝗘𝗗𝗜𝗔 』
- ✧autolink ✧chords 
- ✧convert ✧getlink2
- ✧github ✧lv 
- ✧lyrics ✧singx ✧anya2 
- ✧collab ✧tiktok ✧pmvd 
- ✧pubgedit ✧overlay 
- ✧youtube ✧ytb ✧alldl 
- ✧getlink ✧moviedl 
- ✧song ✧video
-╰────────────◊
-
-╭───『 𝗟𝗢𝗩𝗘 』
- ✧cdp ✧kiss ✧pair2 
- ✧pair3 ✧ship ✧us ✧cdp2
-╰────────────◊
-
-╭───『  𝗦𝗢𝗖𝗜𝗔𝗟  』
- ✧fbpost ✧fbreport ✧fbshare
-╰────────────◊
-
-╭──『  𝗔𝗜 𝗖𝗛𝗔𝗧 』
- ✧ask ✧clips ✧gemini 
- ✧geminiv2 ✧gen 
- ✧gojo ✧gpt ✧hina ✧roast 
- ✧snoop ✧bby ✧boxai ✧ai
- ✧hinu ✧yamato ✧smsg
-╰────────────◊
-
-╭──『 𝗚𝗙𝗫 』
- ✧gfx  ✧gfx2 ✧gfx3 
-╰────────────◊
-
-╭──『 𝗔𝗜-𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗘𝗗 』
- ✧prompt3 ✧imagejourney 
- ✧dallex  ✧imaginex 
- ✧imagine ✧genx ✧sdxl
- ✧niji ✧nijiz ✧alya
- ✧realis ✧imagine
- ✧fluxv2 ✧emi ✧gen 
- ✧nixi ✧xl31 ✧ poli
- ✧nigi ✧xl30 ✧flux ✧mgen 
- ✧reality ✧xl ✧nijiv5
- ✧fluxv2 ✧nijiv6 ✧xl4
- ✧alya2 ✧xs ✧niji5
- ✧flux2 ✧niji6 ✧ xl2
- ✧wc(prompt) 
-╰────────────◊
-
-╭──『 𝗣𝗢𝗞𝗘𝗠𝗢𝗡 』
- ✧pokebot    ✧pokeinfo 
- ✧pokechamps ✧pokedex 
- ✧poketrade
-╰────────────◊
-
-╭──『 𝗖𝗨𝗦𝗧𝗢𝗠 』
- ✧setleave ✧setwelcome 
- ✧shortcut
-╰────────────◊
-
-╭──『 𝗪𝗔𝗜𝗙𝗨 𝗚𝗔𝗠𝗘 』
- ✧waifulist ✧waifutop
- ✧waifuinfo ✧waifuinv 
- ✧waifupull ✧waifudex 
- ✧waifusellall
-╰────────────◊
-
-╭──『  𝗥𝗔𝗡𝗞  』
- ✧customrankcard ✧rank 
- ✧ranktop ✧rankup 
- ✧ranking
-╰────────────◊
-
 ━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
 join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
 
@@ -334,64 +51,36 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       roleText2: "2 (Admin bot)",
       roleText0setRole: "0 (set role, all users)",
       roleText1setRole: "1 (set role, group administrators)",
-      pageNotFound: "Page %1 does not exist",
-      shortHelpCategory: "╭──『  %1 cmds 』\n%2╰───────────◊\nTotal %1 cmds : %3\n"
+      pageNotFound: "Page %1 does not exist"
     }
   },
 
-  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData}) {
-
+  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData }) {
     const langCode = await threadsData.get(event.threadID, "data.lang") || global.GoatBot.config.language;
     let customLang = {};
     const pathCustomLang = path.join(__dirname, "..", "..", "languages", "cmds", `${langCode}.js`);
-    if (fs.existsSync(pathCustomLang))
-      customLang = require(pathCustomLang);
+    if (fs.existsSync(pathCustomLang)) customLang = require(pathCustomLang);
+    
     const { threadID } = event;
     const threadData = await threadsData.get(threadID);
     const prefix = getPrefix(threadID);
-    let sortHelp = threadData.settings.sortHelp || "name";
-    if (!["category", "name"].includes(sortHelp))
-      sortHelp = "name";
+    
+    // Determine sortHelp
+    let sortHelp = threadData.settings.sortHelp || defaultSortHelp;
+    if (!sortHelpOptions.includes(sortHelp)) sortHelp = defaultSortHelp;
+
     const commandName = (args[0] || "").toLowerCase();
     const command = commands.get(commandName) || commands.get(aliases.get(commandName));
-
-    // ———————————————— SHORT HELP BY CATEGORY ——————————————— //
-    if (args[0] && args[0].startsWith("-s")) {
-      const category = args[0].substring(2).toLowerCase();
+    
+    // Handle sorting by category
+    if (args[0] === "-s" && args[1]) {
+      const category = args[1].toLowerCase();
       const arrayInfo = [];
-      let msg = "";
+      
       for (const [name, value] of commands) {
-        if (value.config.role > 1 && role < value.config.role)
-          continue;
-        if (value.config.category.toLowerCase() !== category)
-          continue;
-        let describe = name;
-        let shortDescription;
-        const shortDescriptionCustomLang = customLang[name]?.shortDescription;
-        if (shortDescriptionCustomLang != undefined)
-          shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
-        else if (value.config.shortDescription)
-          shortDescription = checkLangObject(value.config.shortDescription, langCode);
-        if (shortDescription)
-          describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
-        arrayInfo.push(describe);
-      }
-      arrayInfo.sort();
-      msg += arrayInfo.reduce((text, item, index) => text += `✧${item}\n`, '');
-      const totalCommands = arrayInfo.length;
-      return message.reply(getLang("shortHelpCategory", category.toUpperCase(), msg, totalCommands));
-    }
+        if (value.config.role > 1 && role < value.config.role) continue;
 
-    // ———————————————— LIST ALL COMMAND ——————————————— //
-    if (!command && !args[0] || !isNaN(args[0])) {
-      const arrayInfo = [];
-      let msg = "";
-      if (sortHelp == "name") {
-        const page = parseInt(args[0]) || 1;
-        const numberOfOnePage = 30;
-        for (const [name, value] of commands) {
-          if (value.config.role > 1 && role < value.config.role)
-            continue;
+        if (getCommandCategory(value) === category) {
           let describe = name;
           let shortDescription;
           const shortDescriptionCustomLang = customLang[name]?.shortDescription;
@@ -406,7 +95,46 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
             priority: value.priority || 0
           });
         }
-        arrayInfo.sort((a, b) => a.data - b.data);
+      }
+
+      arrayInfo.sort((a, b) => a.data.localeCompare(b.data));
+      arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
+      
+      const numberOfOnePage = 30;
+      const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
+      const page = parseInt(args[2]) || 1;
+      if (page < 1 || page > totalPage)
+        return message.reply(getLang("pageNotFound", page));
+      const returnArray = allPage[page - 1] || [];
+      const startNumber = (page - 1) * numberOfOnePage + 1;
+      let msg = (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
+      return message.reply(getLang("help", msg, page, totalPage, arrayInfo.length, prefix, doNotDelete));
+    }
+    
+    // ———————————————— LIST ALL COMMAND ——————————————— //
+    if (!command && !args[0] || !isNaN(args[0])) {
+      const arrayInfo = [];
+      let msg = "";
+      if (sortHelp === "name") {
+        const page = parseInt(args[0]) || 1;
+        const numberOfOnePage = 30;
+        for (const [name, value] of commands) {
+          if (value.config.role > 1 && role < value.config.role) continue;
+          let describe = name;
+          let shortDescription;
+          const shortDescriptionCustomLang = customLang[name]?.shortDescription;
+          if (shortDescriptionCustomLang != undefined)
+            shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
+          else if (value.config.shortDescription)
+            shortDescription = checkLangObject(value.config.shortDescription, langCode);
+          if (shortDescription)
+            describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
+          arrayInfo.push({
+            data: describe,
+            priority: value.priority || 0
+          });
+        }
+        arrayInfo.sort((a, b) => a.data.localeCompare(b.data));
         arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
         const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
         if (page < 1 || page > totalPage)
@@ -415,14 +143,12 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
         const startNumber = (page - 1) * numberOfOnePage + 1;
         msg += (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
         await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
-      };
+      }
     }
-
     // ———————————— COMMAND DOES NOT EXIST ———————————— //
     else if (!command && args[0]) {
       return message.reply(getLang("commandNotFound", args[0]));
     }
-
     // ————————————————— INFO COMMAND ————————————————— //
     else {
       const formSendMessage = {};
@@ -432,9 +158,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       if (guide == undefined)
         guide = customLang[configCommand.name]?.guide?.[langCode] || customLang[configCommand.name]?.guide?.["en"];
 
-      guide = guide || {
-        body: ""
-      };
+      guide = guide || { body: "" };
       if (typeof guide == "string")
         guide = { body: guide };
       const guideBody = guide.body
