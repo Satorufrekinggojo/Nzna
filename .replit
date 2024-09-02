@@ -48,7 +48,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
     }
   },
 
-  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData}) {
+  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData }) {
     const langCode = await threadsData.get(event.threadID, "data.lang") || global.GoatBot.config.language;
     let customLang = {};
     const pathCustomLang = path.join(__dirname, "..", "..", "languages", "cmds", `${langCode}.js`);
@@ -64,11 +64,43 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
     const command = commands.get(commandName) || commands.get(aliases.get(commandName));
     const styleOption = args[1]?.match(/^-s\s*([a-zA-Z, ]+)$/);
 
-    // ———————————————— LIST ALL COMMAND ——————————————— //
+    // Handle -s option
+    if (styleOption) {
+      const styles = styleOption[1].split(/,\s*/);
+      const filteredCommands = [];
+      for (const [name, value] of commands) {
+        if (value.config.role > 1 && role < value.config.role)
+          continue;
+        if (styles.includes(value.config.style)) {
+          let describe = name;
+          let shortDescription;
+          const shortDescriptionCustomLang = customLang[name]?.shortDescription;
+          if (shortDescriptionCustomLang !== undefined)
+            shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
+          else if (value.config.shortDescription)
+            shortDescription = checkLangObject(value.config.shortDescription, langCode);
+          if (shortDescription)
+            describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
+          filteredCommands.push({
+            data: describe,
+            priority: value.priority || 0
+          });
+        }
+      }
+      filteredCommands.sort((a, b) => a.data - b.data);
+      filteredCommands.sort((a, b) => a.priority > b.priority ? -1 : 1);
+      const totalCommands = filteredCommands.length;
+      const styleName = styles.join(', ');
+      const commandList = filteredCommands.reduce((text, item, index) => text += `✧${item.data} \n`, '');
+      const msg = getLang("styleFormat", styleName, commandList, styleName, totalCommands);
+      return message.reply(msg);
+    }
+
+    // List all commands
     if (!command && (!args[0] || !isNaN(args[0]))) {
       const arrayInfo = [];
       let msg = "";
-      if (sortHelp == "name") {
+      if (sortHelp === "name") {
         const page = parseInt(args[0]) || 1;
         const numberOfOnePage = 30;
         for (const [name, value] of commands) {
@@ -77,7 +109,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
           let describe = name;
           let shortDescription;
           const shortDescriptionCustomLang = customLang[name]?.shortDescription;
-          if (shortDescriptionCustomLang != undefined)
+          if (shortDescriptionCustomLang !== undefined)
             shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
           else if (value.config.shortDescription)
             shortDescription = checkLangObject(value.config.shortDescription, langCode);
@@ -99,19 +131,19 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
         await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
       }
     }
-    // ———————————— COMMAND DOES NOT EXIST ———————————— //
+    // Command does not exist
     else if (!command && args[0]) {
       return message.reply(getLang("commandNotFound", args[0]));
     }
-    // ————————————————— INFO COMMAND ————————————————— //
+    // Info command
     else {
       const formSendMessage = {};
       const configCommand = command.config;
       let guide = configCommand.guide?.[langCode] || configCommand.guide?.["en"];
-      if (guide == undefined)
+      if (guide === undefined)
         guide = customLang[configCommand.name]?.guide?.[langCode] || customLang[configCommand.name]?.guide?.["en"];
       guide = guide || { body: "" };
-      if (typeof guide == "string")
+      if (typeof guide === "string")
         guide = { body: guide };
       const guideBody = guide.body
         .replace(/\{prefix\}|\{p\}/g, prefix)
