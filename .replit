@@ -9,12 +9,12 @@ module.exports = {
   config: {
     name: "help",
     version: "1.0",
-    author: "NTKhang | Rehat86 | Updated by Vincenzo",
+    author: "NTKhang | Rehat86",
     countDown: 5,
     role: 0,
     category: "info",
     guide: {
-      en: "{pn} [empty or <command name>] or {pn} -s [letter]"
+      en: "{pn} [empty or <command name>]"
     },
     priority: 1
   },
@@ -24,7 +24,6 @@ module.exports = {
       help: `╔═══════════╗
     𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮 𝗖𝗵𝗮𝘁𝗯𝗼𝘁
 ╚═══════════╝
-
 
 ━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
 join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
@@ -44,11 +43,12 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       roleText0setRole: "0 (set role, all users)",
       roleText1setRole: "1 (set role, group administrators)",
       pageNotFound: "Page %1 does not exist",
-      commandList: "╭──『  %1 cmds 』\n%2╰────────────◊\nTotal (%1) cmds = %3"
+      shortCommands: "╭──『 %1 cmds 』\n%2\n╰────────────◊\nTotal (%1) cmds = %3"
     }
   },
 
   onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData }) {
+
     const langCode = await threadsData.get(event.threadID, "data.lang") || global.GoatBot.config.language;
     let customLang = {};
     const pathCustomLang = path.join(__dirname, "..", "..", "languages", "cmds", `${langCode}.js`);
@@ -62,31 +62,39 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       sortHelp = "name";
     const commandName = (args[0] || "").toLowerCase();
     const command = commands.get(commandName) || commands.get(aliases.get(commandName));
+    const option = args[1] ? args[1].toLowerCase() : "";
 
     // ———————————————— LIST ALL COMMAND ——————————————— //
     if (!command && (!args[0] || !isNaN(args[0]))) {
-      if (args[0] && args[0].startsWith("-s")) {
-        const letter = args[1] ? args[1].toLowerCase() : "";
-        if (!letter || letter.length !== 1)
-          return message.reply(`Please provide a single letter to filter the commands, e.g., -s a`);
-
-        const filteredCommands = [];
-        for (const [name, value] of commands) {
-          if (name.startsWith(letter) && (value.config.role <= role)) {
-            filteredCommands.push(name);
-          }
-        }
-
-        if (filteredCommands.length === 0)
-          return message.reply(`No commands found starting with "${letter.toUpperCase()}"`);
-
-        const formattedCommands = filteredCommands.join(" ✧");
-        const response = getLang("commandList", letter.toUpperCase(), `✧${formattedCommands}`, filteredCommands.length);
-        return message.reply(response);
-      }
-
       const arrayInfo = [];
       let msg = "";
+
+      if (option.startsWith("-s")) {
+        const letter = option.slice(2).trim();
+        if (letter.length === 1) {
+          const filteredCommands = [];
+          for (const [name, value] of commands) {
+            if (value.config.role > 1 && role < value.config.role)
+              continue;
+            if (name.startsWith(letter)) {
+              let describe = name;
+              let shortDescription;
+              const shortDescriptionCustomLang = customLang[name]?.shortDescription;
+              if (shortDescriptionCustomLang != undefined)
+                shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
+              else if (value.config.shortDescription)
+                shortDescription = checkLangObject(value.config.shortDescription, langCode);
+              if (shortDescription)
+                describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
+              filteredCommands.push(describe);
+            }
+          }
+          msg = filteredCommands.join("\n");
+          await message.reply(getLang("shortCommands", letter.toUpperCase(), msg, filteredCommands.length));
+          return;
+        }
+      }
+
       if (sortHelp == "name") {
         const page = parseInt(args[0]) || 1;
         const numberOfOnePage = 30;
@@ -107,7 +115,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
             priority: value.priority || 0
           });
         }
-        arrayInfo.sort((a, b) => a.data - b.data);
+        arrayInfo.sort((a, b) => a.data.localeCompare(b.data));
         arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
         const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
         if (page < 1 || page > totalPage)
@@ -116,7 +124,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
         const startNumber = (page - 1) * numberOfOnePage + 1;
         msg += (returnArray || []).reduce((text, item, index) => text += `│ ${index + startNumber}${index + startNumber < 10 ? " " : ""}. ${item.data}\n`, '').slice(0, -1);
         await message.reply(getLang("help", msg, page, totalPage, commands.size, prefix, doNotDelete));
-      };
+      }
     }
     // ———————————— COMMAND DOES NOT EXIST ———————————— //
     else if (!command && args[0]) {
@@ -131,9 +139,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       if (guide == undefined)
         guide = customLang[configCommand.name]?.guide?.[langCode] || customLang[configCommand.name]?.guide?.["en"];
 
-      guide = guide || {
-        body: ""
-      };
+      guide = guide || { body: "" };
       if (typeof guide == "string")
         guide = { body: guide };
       const guideBody = guide.body
