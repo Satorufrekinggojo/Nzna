@@ -25,6 +25,7 @@ module.exports = {
     𝗡𝗶𝘀𝗵𝗶𝗺𝗶𝘆𝗮 𝗖𝗵𝗮𝘁𝗯𝗼𝘁
 ╚═══════════╝
 
+
 ━━━ 𝗦𝗨𝗣𝗣𝗢𝗥𝗧 𝗕𝗢𝗫 ━━━
 join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to contact with admins.
 
@@ -43,12 +44,11 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       roleText0setRole: "0 (set role, all users)",
       roleText1setRole: "1 (set role, group administrators)",
       pageNotFound: "Page %1 does not exist",
-      shortCommands: "╭──『 %1 cmds 』\n%2\n╰────────────◊\nTotal (%1) cmds = %3"
+      styleFormat: "╭──『 %s cmds 』\n%s\n╰────────────◊\nTotal (%s) cmds = %d"
     }
   },
 
-  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData }) {
-
+  onStart: async function ({ message, args, event, threadsData, getLang, role, api, usersData}) {
     const langCode = await threadsData.get(event.threadID, "data.lang") || global.GoatBot.config.language;
     let customLang = {};
     const pathCustomLang = path.join(__dirname, "..", "..", "languages", "cmds", `${langCode}.js`);
@@ -62,39 +62,12 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
       sortHelp = "name";
     const commandName = (args[0] || "").toLowerCase();
     const command = commands.get(commandName) || commands.get(aliases.get(commandName));
-    const option = args[1] ? args[1].toLowerCase() : "";
+    const styleOption = args[1]?.match(/^-s\s*([a-zA-Z, ]+)$/);
 
     // ———————————————— LIST ALL COMMAND ——————————————— //
     if (!command && (!args[0] || !isNaN(args[0]))) {
       const arrayInfo = [];
       let msg = "";
-
-      if (option.startsWith("-s")) {
-        const letter = option.slice(2).trim();
-        if (letter.length === 1) {
-          const filteredCommands = [];
-          for (const [name, value] of commands) {
-            if (value.config.role > 1 && role < value.config.role)
-              continue;
-            if (name.startsWith(letter)) {
-              let describe = name;
-              let shortDescription;
-              const shortDescriptionCustomLang = customLang[name]?.shortDescription;
-              if (shortDescriptionCustomLang != undefined)
-                shortDescription = checkLangObject(shortDescriptionCustomLang, langCode);
-              else if (value.config.shortDescription)
-                shortDescription = checkLangObject(value.config.shortDescription, langCode);
-              if (shortDescription)
-                describe += `: ${cropContent(shortDescription.charAt(0).toUpperCase() + shortDescription.slice(1))}`;
-              filteredCommands.push(describe);
-            }
-          }
-          msg = filteredCommands.join("\n");
-          await message.reply(getLang("shortCommands", letter.toUpperCase(), msg, filteredCommands.length));
-          return;
-        }
-      }
-
       if (sortHelp == "name") {
         const page = parseInt(args[0]) || 1;
         const numberOfOnePage = 30;
@@ -115,7 +88,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
             priority: value.priority || 0
           });
         }
-        arrayInfo.sort((a, b) => a.data.localeCompare(b.data));
+        arrayInfo.sort((a, b) => a.data - b.data);
         arrayInfo.sort((a, b) => a.priority > b.priority ? -1 : 1);
         const { allPage, totalPage } = global.utils.splitPage(arrayInfo, numberOfOnePage);
         if (page < 1 || page > totalPage)
@@ -134,11 +107,9 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
     else {
       const formSendMessage = {};
       const configCommand = command.config;
-
       let guide = configCommand.guide?.[langCode] || configCommand.guide?.["en"];
       if (guide == undefined)
         guide = customLang[configCommand.name]?.guide?.[langCode] || customLang[configCommand.name]?.guide?.["en"];
-
       guide = guide || { body: "" };
       if (typeof guide == "string")
         guide = { body: guide };
@@ -146,7 +117,7 @@ join Nisimiya Bot Zone ❈ Support Box type: !supportgc or type: !callad to cont
         .replace(/\{prefix\}|\{p\}/g, prefix)
         .replace(/\{name\}|\{n\}/g, configCommand.name)
         .replace(/\{pn\}/g, prefix + configCommand.name);
-
+      
       const aliasesString = configCommand.aliases ? configCommand.aliases.join(", ") : getLang("doNotHave");
       const aliasesThisGroup = threadData.data.aliases ? (threadData.data.aliases[configCommand.name] || []).join(", ") : getLang("doNotHave");
 
