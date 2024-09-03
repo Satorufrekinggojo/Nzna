@@ -1,28 +1,22 @@
+const axios = require('axios');
 const fs = require("fs-extra");
-const path = require("path");
-const axios = require("axios");
-const { createCanvas, loadImage } = require("canvas");
+const path = require('path');
 
 const aspectRatioMap = {
-  '1:1': { width: 1024, height: 1024 },
-  '9:7': { width: 1152, height: 896 },
-  '7:9': { width: 896, height: 1152 },
-  '19:13': { width: 1216, height: 832 },
-  '13:19': { width: 832, height: 1216 },
-  '7:4': { width: 1344, height: 768 },
-  '4:7': { width: 768, height: 1344 },
-  '12:5': { width: 1500, height: 625 },
-  '5:12': { width: 640, height: 1530 },
-  '16:9': { width: 1344, height: 756 },
-  '9:16': { width: 756, height: 1344 },
-  '2:3': { width: 1024, height: 1536 },
-  '3:2': { width: 1536, height: 1024 }
+    '1:1': { width: 1024, height: 1024 },
+    '9:7': { width: 1152, height: 896 },
+    '7:9': { width: 896, height: 1152 },
+    '19:13': { width: 1216, height: 832 },
+    '13:19': { width: 832, height: 1216 },
+    '7:4': { width: 1344, height: 768 },
+    '4:7': { width: 768, height: 1344 },
+    '12:5': { width: 1500, height: 625 },
+    '5:12': { width: 640, height: 1530 },
+    '16:9': { width: 1344, height: 756 },
+    '9:16': { width: 756, height: 1344 },
+    '2:3': { width: 1024, height: 1536 },
+    '3:2': { width: 1536, height: 1024 }
 };
-
-const cacheDir = path.join(__dirname, 'tmp');
-if (!fs.existsSync(cacheDir)) {
-  fs.mkdirSync(cacheDir);
-}
 
 module.exports = {
   config: {
@@ -31,127 +25,56 @@ module.exports = {
     version: '1.1',
     role: 2,
     countDown: 5,
-    author: 'Vincenzo & Marincross',
+    author: 'Vincenzo',
     category: 'AI',
     guide: { 
       en: ''
     }
   },
   onStart: async ({ event, message, api, args }) => {
-    let prompt = '';
+    let prompt = args.join(' ') || '';
     let ratio = '1:1';
-    let style = '';
-    let seed = '';
-
+    
     args.forEach(arg => {
       if (arg.startsWith('--ar=')) {
         ratio = arg.slice(5);
-      } else if (arg.startsWith('--style=')) {
-        style = arg.slice(8);
-      } else if (arg.startsWith('--seed=')) {
-        seed = arg.slice(7);
-      } else {
-        prompt += `${arg} `;
       }
     });
 
-    prompt = prompt.trim();  // Enlever les espaces supplémentaires
-    const endpoint = `/generate?prompt=${encodeURIComponent(prompt)}${style ? `&style=${style}` : ''}&ratio=${ratio}${seed ? `&seed=${seed}` : ''}`;
+    const endpoint = `/generate?prompt=${encodeURIComponent(prompt)}&ratio=${ratio}`;
 
     try {
-      message.reply('Generating images, please wait... ⏰', event.messageID);
+      message.reply('Generating, please wait... ⏰', event.messageID);
+      const response = await axios.get(https://vincenzo-flux.onrender.com${endpoint}`);
 
-      const images = [];
-      const numImages = 4;
+      if (response.data.success) {
+        const imageURL = response.data.imageUrl;
+        const imagePath = path.join(__dirname, 'tmp', `image_${Date.now()}.jpg`);
 
-      for (let i = 0; i < numImages; i++) {
-        const response = await axios.get(`https://vincenzo-flux.onrender.com${endpoint}`);
-
-        if (response.data.success) {
-          const imageURL = response.data.imageUrl;
-          const imagePath = path.join(cacheDir, `image_${Date.now()}_${i}.jpg`);
-
-          const writer = fs.createWriteStream(imagePath);
-          const imageResponse = await axios({
-            url: imageURL,
-            method: 'GET',
-            responseType: 'stream'
-          });
-          imageResponse.data.pipe(writer);
-
-          await new Promise((resolve, reject) => {
-            writer.on('finish', resolve);
-            writer.on('error', reject);
-          });
-
-          images.push(imagePath);
-        } else {
-          message.reply("❌ Failed to generate image. Try Again!");
-          return;
-        }
-      }
-
-      const { width, height } = aspectRatioMap[ratio];
-      const canvas = createCanvas(width * 2, height * 2);
-      const ctx = canvas.getContext('2d');
-
-      const positions = [
-        { x: 0, y: 0 },
-        { x: width, y: 0 },
-        { x: 0, y: height },
-        { x: width, y: height }
-      ];
-
-      for (let i = 0; i < numImages; i++) {
-        const img = await loadImage(images[i]);
-        ctx.drawImage(img, positions[i].x, positions[i].y, width, height);
-      }
-
-      const combinedImagePath = path.join(cacheDir, `combined_image_${Date.now()}.jpg`);
-      const out = fs.createWriteStream(combinedImagePath);
-      const stream = canvas.createJPEGStream();
-      stream.pipe(out);
-
-      await new Promise((resolve, reject) => {
-        out.on('finish', resolve);
-        out.on('error', reject);
-      });
-
-      const combinedImageStream = fs.createReadStream(combinedImagePath);
-      const sentMessage = await message.reply({ body: 'Images Generated. Reply with 1, 2, 3, or 4 to select an image.', attachment: combinedImageStream });
-
-      const waitForResponse = async () => {
-        while (true) {
-          const history = await api.getThreadHistory(event.threadID, 1, null, null, sentMessage.messageID);
-          const response = history[0];
-
-          if (response && response.senderID === event.senderID) {
-            const body = response.body;
-
-            if (typeof body === 'string') {
-              const choice = parseInt(body.replace(/\s+/g, ''), 10); // Supprimer les espaces et convertir en nombre
-              if (!isNaN(choice) && choice >= 1 && choice <= 4) {
-                return choice;
-              }
-            }
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      };
-
-      const userChoice = await waitForResponse();
-
-      if (userChoice) {
-        const selectedImageStream = fs.createReadStream(images[userChoice - 1]);
-        await message.reply({ attachment: selectedImageStream }, () => {
-          images.forEach(imgPath => fs.unlinkSync(imgPath));
-          fs.unlinkSync(combinedImagePath);
+        const writer = fs.createWriteStream(imagePath);
+        const imageResponse = await axios({
+          url: imageURL,
+          method: 'GET',
+          responseType: 'stream'
         });
+        imageResponse.data.pipe(writer);
+
+        await new Promise((resolve, reject) => {
+          writer.on('finish', resolve);
+          writer.on('error', reject);
+        });
+
+        const imageStream = fs.createReadStream(imagePath);
+        const responseMessage = { body: 'flux Image Generated... 😘', attachment: imageStream };
+        message.reply(responseMessage, () => fs.unlinkSync(imagePath));
+
+      } else {
+        message.reply("❌ Failed to generate image. Try Again!.");
       }
 
     } catch (err) {
-      console.error("Error:", err.message);
-      message.reply(`❌ Error: ${err.message}`);
+      console.error("Error sending request", err);
+      message.reply(`❌ Error: ${err.message}`); 
     }
   }
 };
