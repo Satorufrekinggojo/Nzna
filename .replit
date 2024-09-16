@@ -1,80 +1,47 @@
 const axios = require('axios');
-const fs = require("fs-extra");
-const path = require('path');
-
-const aspectRatioMap = {
-    '1:1': { width: 1024, height: 1024 },
-    '9:7': { width: 1152, height: 896 },
-    '7:9': { width: 896, height: 1152 },
-    '19:13': { width: 1216, height: 832 },
-    '13:19': { width: 832, height: 1216 },
-    '7:4': { width: 1344, height: 768 },
-    '4:7': { width: 768, height: 1344 },
-    '12:5': { width: 1500, height: 625 },
-    '5:12': { width: 640, height: 1530 },
-    '16:9': { width: 1344, height: 756 },
-    '9:16': { width: 756, height: 1344 },
-    '2:3': { width: 1024, height: 1536 },
-    '3:2': { width: 1536, height: 1024 }
-};
-
 module.exports = {
   config: {
-    name: 'fluxv3',
-    aliases: [],
-    version: '1.1',
-    role: 2,
+    name: "prompt",
+    version: "1.0",
+    author: "rehat--",
     countDown: 5,
-    author: 'Vincenzo',
-    category: 'AI',
-    guide: { 
-      en: ''
-    }
+    role: 0,
+    guide: { en: "{pn} <prompt>" },
+    longDescription: {
+      en: "Get image generator prompt by replying image and by text"
+    },
+    category: "image"
   },
-  onStart: async ({ event, message, api, args }) => {
-    let prompt = args.join(' ') || '';
-    let ratio = '1:1';
-    
-    args.forEach(arg => {
-      if (arg.startsWith('--ar=')) {
-        ratio = arg.slice(5);
-      }
-    });
-
-    const endpoint = `/generate?prompt=${encodeURIComponent(prompt)}&ratio=${ratio}`;
-
+  onStart: async function ({ message, event, args, api }) {
     try {
-      message.reply('Generating, please wait... ⏰', event.messageID);
-      const response = await axios.get(https://vincenzo-flux.onrender.com${endpoint}`);
+      let imageUrl;
+      let khankirChele = args.join(" ");
 
-      if (response.data.success) {
-        const imageURL = response.data.imageUrl;
-        const imagePath = path.join(__dirname, 'tmp', `image_${Date.now()}.jpg`);
-
-        const writer = fs.createWriteStream(imagePath);
-        const imageResponse = await axios({
-          url: imageURL,
-          method: 'GET',
-          responseType: 'stream'
-        });
-        imageResponse.data.pipe(writer);
-
-        await new Promise((resolve, reject) => {
-          writer.on('finish', resolve);
-          writer.on('error', reject);
-        });
-
-        const imageStream = fs.createReadStream(imagePath);
-        const responseMessage = { body: 'flux Image Generated... 😘', attachment: imageStream };
-        message.reply(responseMessage, () => fs.unlinkSync(imagePath));
-
-      } else {
-        message.reply("❌ Failed to generate image. Try Again!.");
+      if (event.type === "message_reply") {
+        if (["photo", "sticker"].includes(event.messageReply.attachments[0]?.type)) {
+          imageUrl = event.messageReply.attachments[0].url;
+        } else {
+          return api.sendMessage({ body: "Reply must be an image." }, event.threadID);
+        }
+      } else if (args[0]?.match(/(https?:\/\/.*\.(?:png|jpg|jpeg))/g)) {
+        imageUrl = args[0];
+      } else if (!khankirChele) {
+        return api.sendMessage({ body: "Reply to an image or provide a prompt." }, event.threadID);
       }
 
-    } catch (err) {
-      console.error("Error sending request", err);
-      message.reply(`❌ Error: ${err.message}`); 
+      if (imageUrl) {
+        const response = await axios.post(`https://rehatdesu.xyz/api/imagine/i2p?url=${encodeURIComponent(imageUrl)}&apikey=rimon`);
+        const description = response.data.result;
+
+        await message.reply(description);
+      } else if (khankirChele) {
+        const response = await axios.get(`https://rehatdesu.xyz/api/imagine/t2p?text=${encodeURIComponent(khankirChele)}&apikey=rimon`);
+        const prompt = response.data.response;
+        await message.reply(prompt);
+      }
+    } catch (error) {
+      console.error(error);
+      message.reply("An error occurred.");
     }
   }
 };
