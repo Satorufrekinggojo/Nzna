@@ -1,38 +1,160 @@
 const axios = require("axios");
-const { getStreamFromURL } = global.utils;
+const fs = require("fs");
+const path = require("path");
+
+const aspectRatioMap = {
+   '1:1': { width: 1024, height: 1024 },
+   '9:7': { width: 1152, height: 896 },
+   '7:9': { width: 896, height: 1152 },
+   '19:13': { width: 1216, height: 832 },
+   '13:19': { width: 832, height: 1216 },
+   '7:4': { width: 1344, height: 768 },
+   '4:7': { width: 768, height: 1344 },
+   '12:5': { width: 1536, height: 640 },
+   '5:12': { width: 640, height: 1536 },
+   '3:2': { width: 1440, height: 900 },
+   '2:3': { width: 900, height: 1440 }
+};
+
+const styleMap = {
+    "1": "masterpiece, best quality, very aesthetic, absurdres, cinematic still, emotional, harmonious, vignette, highly detailed, high budget, bokeh, cinemascope, moody, epic, gorgeous, film grain, grainy",
+    "2": "masterpiece, best quality, very aesthetic, absurdres, cinematic photo, 35mm photograph, film, bokeh, professional, 4k, highly detailed",
+    "3": "masterpiece, best quality, very aesthetic, absurdres, anime artwork, anime style, key visual, vibrant, studio anime, highly detailed",
+    "4": "masterpiece, best quality, very aesthetic, absurdres, manga style, vibrant, high-energy, detailed, iconic, Japanese comic style",
+    "5": "masterpiece, best quality, very aesthetic, absurdres, concept art, digital artwork, illustrative, painterly, matte painting, highly detailed",
+    "6": "masterpiece, best quality, very aesthetic, absurdres, pixel-art, low-res, blocky, pixel art style, 8-bit graphics",
+    "7": "masterpiece, best quality, very aesthetic, absurdres, ethereal fantasy concept art, magnificent, celestial, ethereal, painterly, epic, majestic, magical, fantasy art, cover art, dreamy",
+    "8": "masterpiece, best quality, very aesthetic, absurdres, neonpunk style, cyberpunk, vaporwave, neon, vibes, vibrant, stunningly beautiful, crisp, detailed, sleek, ultramodern, magenta highlights, dark purple shadows, high contrast, cinematic, ultra detailed, intricate, professional",
+    "9": "masterpiece, best quality, very aesthetic, absurdres, professional 3d model, octane render, highly detailed, volumetric, dramatic lighting"
+};
+
+const apiKeyList = {
+    "keys": [
+        "6046cf8e-2eb8-487d-99a8-e18f62675328",
+        "07da7000-c812-459e-b004-b79f1d544665"
+    ]
+};
+
+let currentKeyIndex = 0;
+
+function getNextKey() {
+    if (currentKeyIndex >= apiKeyList.keys.length) {
+        currentKeyIndex = 0;
+    }
+    const nextKey = apiKeyList.keys[currentKeyIndex];
+    currentKeyIndex++;
+    return nextKey;
+}
 
 module.exports = {
-  config: {
-    name: "giji",
-    aliases: ["gijijourney"],
-    version: "1.0",
-    author: "Arfan Mahim | Mahi",//modified by mahi 
-    countDown: 5,
-    role: 0,
-    longDescription: "Text to Image",
-    category: 'ai',
-    guide: {
-      en: "{pn} prompt"
-    }
-  },
-  onStart: async function ({ api, args, message, event }) {
-    try {
-      let prompt = args.join(" ");
-      let imageUrl = `https://ts-ai-api-shuddho.onrender.com/api/animagine?prompt=${encodeURIComponent(prompt)}`;
-      const waitingMessage = await message.reply("Please wait...⏳");
-      message.reaction('⏳', event.messageID);
+    config: {
+        name: "dal",
+        version: "1.0",
+        author: "MarianCross",
+        countdown: 5,
+        role: 0,
+        longDescription: "Generate unique and captivating images using DALL-E 3",
+        category: "ai",
+        guide: {
+            en: "{pn} <prompt> -ar 16:9 --style 1/2/3"
+        }
+    },
 
-      await message.reply({
-        body: `✅ IMAGE GENERATED FROM NIJI!`,
-        attachment: await getStreamFromURL(imageUrl)
-      });
+    onStart: async function ({ args, event, message }) {
+        try {
+            let prompt = args.join(' ');
+            if (!prompt) {
+                message.reply("Please provide a prompt.");
+                return;
+            }
 
-      message.unsend(waitingMessage.messageID);
-      await message.reaction('✅', event.messageID);
-    } catch (error) {
-      console.error(error);
-      message.reply("An error occurred.");
-      message.reaction('❌', event.messageID);
+            // Check for aspect ratio argument
+            let aspectRatio = '1:1'; // Default aspect ratio
+            const arIndex = args.indexOf('-ar');
+            if (arIndex !== -1 && args[arIndex + 1]) {
+                aspectRatio = args[arIndex + 1];
+                prompt = args.slice(0, arIndex).join(' '); // Remove -ar part from prompt
+            }
+
+            // Check for style argument
+            let style = '';
+            const styleIndex = args.indexOf('--style');
+            if (styleIndex !== -1 && args[styleIndex + 1]) {
+                const styleOption = args[styleIndex + 1];
+                style = styleMap[styleOption] || '';
+                prompt = args.slice(0, styleIndex).join(' '); // Remove --style part from prompt
+            }
+
+            // Get width and height from aspect ratio map
+            const { width, height } = aspectRatioMap[aspectRatio] || { width: 1024, height: 1024 };
+
+            let apiKey = getNextKey();
+            await message.reply('Please Wait...⏳');
+            let response;
+            let success = false;
+
+            while (!success && apiKey) {
+                try {
+                    response = await axios.post('https://visioncraft.top/api/image/generate', {
+                        prompt: style ? `${style}, ${prompt}` : prompt,
+                        token: apiKey,
+                        model: "AnimagineXL-3.1",
+                        negative_prompt: "nsfw, lowres, (bad), text, error, fewer, extra, missing, worst quality, jpeg artifacts, low quality, watermark, unfinished, displeasing, oldest, early, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract]",
+                        steps: 28,
+                        width: width,
+                        height: height,
+                        sampler: "Euler a",
+                        cfg_scale: 7,
+                        seed: -1,
+                        stream: false,
+                    }, {
+                        responseType: 'json'
+                    });
+
+                    success = true;
+                } catch (error) {
+                    if (error.response && error.response.status === 403) {
+                        console.log("Retrying with a new key...");
+                        apiKey = getNextKey();
+                    } else {
+                        throw new Error(error.message);
+                    }
+                }
+            }
+
+            if (success) {
+                const imagePath = path.join(__dirname, 'cache', 'dallez.png');
+                const imageUrl = response.data.image_url;
+
+                if (!fs.existsSync(path.dirname(imagePath))) {
+                    fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+                }
+
+                const imageResponse = await axios({
+                    url: imageUrl,
+                    method: 'GET',
+                    responseType: 'stream'
+                });
+
+                const fileStream = fs.createWriteStream(imagePath);
+                imageResponse.data.pipe(fileStream);
+
+                fileStream.on('finish', () => {
+                    message.reply({
+                        attachment: fs.createReadStream(imagePath)
+                    });
+                });
+
+                fileStream.on('error', (error) => {
+                    console.error(error);
+                    message.reply('An error occurred while saving the image.');
+                });
+            } else {
+                await message.reply('An error occurred.');
+            }
+        } catch (error) {
+            console.error(error);
+            await message.reply('An error occurred.');
+        }
     }
-  }
 };
