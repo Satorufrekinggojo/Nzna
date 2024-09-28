@@ -1,60 +1,160 @@
-const fs = require("fs-extra");
 const axios = require("axios");
+const fs = require("fs");
 const path = require("path");
 
-const cookie = "1BHfPxSALODcSLaRygB4TvrFciFjShTN4OWYpRygQa0wOOr3GLnN6ocjwuLEwAyj83VHwjmfbvSLoQfH865ybVfIqgGN4QEyKPC02VfA3rKPz4SYXHrWP1NBIG-GwPeRAD0OVq5Mjnbu75PDHdOLlGebwQIsSnUcfDTT4yybTe_6JjVg0uMyAnx6vazjdNIq5J1fGQW0AD4FjNf4MkMnHiQ"; // Enter _U value.
-const auth = "FABiBBRaTOJILtFsMkpLVWSG6AN6C/svRwNmAAAEgAAACJe+SfZ4NHZnIARvO+WcSbrv9c/fWXywWawVt80YpGIWqagfJJbwjJZDInw5WKQeyCtStCa8SYRV8QIcv4JXuNklpCxnHhit8RZXepB87O9YuOqg14BHgxEs9viO5TtSUVzoUT2ILhcPUk2RthIMflGCHgVCB0I6UJExI3EmNfx1U1qlSli8GHK1uNep8Wu148SA1SQI8C/hAWGa6XsTXu8F1aX+JynVQp6v28YYpPMQTGM0gh/4Z/zwXfS3lhOJV9QNcxY6OtjGownIglF+QgyiUxsLMo+FuXbuL2OlEWR/yx0u4V/mgVGiTPbERVfAO4ttzaVj4CJ7l9Thb/Bwfy9yJ3dCUGQ1b0ILh2e5cwGMUKxHNMWWETsRboMzEimsdY+TIxmNLxLFgz0q8IoCVk/7jN+hXQ4efdOtrDsgrYfvLfrn1HSzs+lFlKlIoO2SOLCAsRQIPNNvlMnmaEMumCjT2fWQMknmKM7Tz3PJN+285DSwyjS15VSjsEiDgRQERLvsupyvfQBiKcgxQSx2KxLSOTEW33g6kiy+CsV7cqosOs8T2XWWbMXhxZedZTuNY/2Y/H057gbwA/kHOPUkPmGJsz7lngzG2ZtXadyuJVSxdbm7NbbIgpRJP3KPud4BTQWHkKUTuvWMSo8S6xzdvtJ74acUHJ7kzq2JoxCadD1epaEFm3ZrEsBCDpSf20K/ZdqntUvn8xbDt71bw+G7tpJhBuk11LiPuedQ0/nNH0N+jmmJVZx6uAFbsRKr1acVjxcANbivCJplUaccsM1380wDldY1h11GShnWXTUtF84DjftlcFLCjAbxBiEUog9DC1D3MHTdox75fmsY7aaKSQW/9G/Q/piPjI1T+JI0IgozehByZitBWeQ4ZPqC3A+IYKp/E0myy2wtzdEQpVgk1NQKVDhxgTc6A78JX09O/LIvz2vkNWjMoFvXKj4k7cwQOCM3bFDfd7oZOaoaoD2oly+LPBFN7nUDNgsh4sYqYFpXtvRfiBgLsuMm3yBYBDchPPoxAwOj7Xs8GkmtYlUVdZRo/iqtCo6KdHvb/7kvDchMnXw2MXAsEvZmM8LNFfbfhiCLUdycQO43f5Ox1QIv/T6Mr+oDVGUIs99Mxkl1il/3Oe4E3bw/jy3Z1X/4lYfYmIG6MQxYLsWrz7wWKGPeFDh84wewwy4SRAHh+cbCTpNSKC5X1H7MAce5vRGdUidORL7Ia3a2lxeobB1lVydP+vnboQjm/hmIHmTqycY9NbBnhY2X4/KYwBUIXdkMbvXZEzeI57ySvaU0fXh7c7TLoRkNZD2a8JfriKnbDBSBj1oUCy72GSpxjZg0DJ3/9lsti1B1xvjQl18w4d88aVdYG9GraXq9GywHiVO2LBWXanktsekv2AEfkAVg/kSaSleVJqBUanPO5zCLuYMUAGIVWVqrDAyqIuVvG/WMBdL0n55T"; // Enter KievRPSSecAuth value.
+const aspectRatioMap = {
+   '1:1': { width: 1024, height: 1024 },
+   '9:7': { width: 1152, height: 896 },
+   '7:9': { width: 896, height: 1152 },
+   '19:13': { width: 1216, height: 832 },
+   '13:19': { width: 832, height: 1216 },
+   '7:4': { width: 1344, height: 768 },
+   '4:7': { width: 768, height: 1344 },
+   '12:5': { width: 1536, height: 640 },
+   '5:12': { width: 640, height: 1536 },
+   '3:2': { width: 1440, height: 900 },
+   '2:3': { width: 900, height: 1440 }
+};
+
+const styleMap = {
+    "1": "masterpiece, best quality, very aesthetic, absurdres, cinematic still, emotional, harmonious, vignette, highly detailed, high budget, bokeh, cinemascope, moody, epic, gorgeous, film grain, grainy",
+    "2": "masterpiece, best quality, very aesthetic, absurdres, cinematic photo, 35mm photograph, film, bokeh, professional, 4k, highly detailed",
+    "3": "masterpiece, best quality, very aesthetic, absurdres, anime artwork, anime style, key visual, vibrant, studio anime, highly detailed",
+    "4": "masterpiece, best quality, very aesthetic, absurdres, manga style, vibrant, high-energy, detailed, iconic, Japanese comic style",
+    "5": "masterpiece, best quality, very aesthetic, absurdres, concept art, digital artwork, illustrative, painterly, matte painting, highly detailed",
+    "6": "masterpiece, best quality, very aesthetic, absurdres, pixel-art, low-res, blocky, pixel art style, 8-bit graphics",
+    "7": "masterpiece, best quality, very aesthetic, absurdres, ethereal fantasy concept art, magnificent, celestial, ethereal, painterly, epic, majestic, magical, fantasy art, cover art, dreamy",
+    "8": "masterpiece, best quality, very aesthetic, absurdres, neonpunk style, cyberpunk, vaporwave, neon, vibes, vibrant, stunningly beautiful, crisp, detailed, sleek, ultramodern, magenta highlights, dark purple shadows, high contrast, cinematic, ultra detailed, intricate, professional",
+    "9": "masterpiece, best quality, very aesthetic, absurdres, professional 3d model, octane render, highly detailed, volumetric, dramatic lighting"
+};
+
+const apiKeyList = {
+    "keys": [
+        "6046cf8e-2eb8-487d-99a8-e18f62675328",
+        "07da7000-c812-459e-b004-b79f1d544665"
+    ]
+};
+
+let currentKeyIndex = 0;
+
+function getNextKey() {
+    if (currentKeyIndex >= apiKeyList.keys.length) {
+        currentKeyIndex = 0;
+    }
+    const nextKey = apiKeyList.keys[currentKeyIndex];
+    currentKeyIndex++;
+    return nextKey;
+}
 
 module.exports = {
-  config: {
-    name: "dalle",
-    version: "1.0",
-    author: "rehat--",
-    role: 0,
-    countDown: 0,
-    longDescription: {
-      en: "Generate unique and captivating images using DALL-E 3"
+    config: {
+        name: "dal",
+        version: "1.0",
+        author: "MarianCross",
+        countdown: 5,
+        role: 0,
+        longDescription: "Generate unique and captivating images using DALL-E 3",
+        category: "ai",
+        guide: {
+            en: "{pn} <prompt> -ar 16:9 --style 1/2/3"
+        }
     },
-    category: "ai",
-    guide: {
-      en: "{pn} <prompt>"
+
+    onStart: async function ({ args, event, message }) {
+        try {
+            let prompt = args.join(' ');
+            if (!prompt) {
+                message.reply("Please provide a prompt.");
+                return;
+            }
+
+            // Check for aspect ratio argument
+            let aspectRatio = '1:1'; // Default aspect ratio
+            const arIndex = args.indexOf('-ar');
+            if (arIndex !== -1 && args[arIndex + 1]) {
+                aspectRatio = args[arIndex + 1];
+                prompt = args.slice(0, arIndex).join(' '); // Remove -ar part from prompt
+            }
+
+            // Check for style argument
+            let style = '';
+            const styleIndex = args.indexOf('--style');
+            if (styleIndex !== -1 && args[styleIndex + 1]) {
+                const styleOption = args[styleIndex + 1];
+                style = styleMap[styleOption] || '';
+                prompt = args.slice(0, styleIndex).join(' '); // Remove --style part from prompt
+            }
+
+            // Get width and height from aspect ratio map
+            const { width, height } = aspectRatioMap[aspectRatio] || { width: 1024, height: 1024 };
+
+            let apiKey = getNextKey();
+            await message.reply('Please Wait...⏳');
+            let response;
+            let success = false;
+
+            while (!success && apiKey) {
+                try {
+                    response = await axios.post('https://visioncraft.top/api/image/generate', {
+                        prompt: style ? `${style}, ${prompt}` : prompt,
+                        token: apiKey,
+                        model: "AnimagineXL-3.1",
+                        negative_prompt: "nsfw, lowres, (bad), text, error, fewer, extra, missing, worst quality, jpeg artifacts, low quality, watermark, unfinished, displeasing, oldest, early, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract]",
+                        steps: 28,
+                        width: width,
+                        height: height,
+                        sampler: "Euler a",
+                        cfg_scale: 7,
+                        seed: -1,
+                        stream: false,
+                    }, {
+                        responseType: 'json'
+                    });
+
+                    success = true;
+                } catch (error) {
+                    if (error.response && error.response.status === 403) {
+                        console.log("Retrying with a new key...");
+                        apiKey = getNextKey();
+                    } else {
+                        throw new Error(error.message);
+                    }
+                }
+            }
+
+            if (success) {
+                const imagePath = path.join(__dirname, 'cache', 'dallez.png');
+                const imageUrl = response.data.image_url;
+
+                if (!fs.existsSync(path.dirname(imagePath))) {
+                    fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+                }
+
+                const imageResponse = await axios({
+                    url: imageUrl,
+                    method: 'GET',
+                    responseType: 'stream'
+                });
+
+                const fileStream = fs.createWriteStream(imagePath);
+                imageResponse.data.pipe(fileStream);
+
+                fileStream.on('finish', () => {
+                    message.reply({
+                        attachment: fs.createReadStream(imagePath)
+                    });
+                });
+
+                fileStream.on('error', (error) => {
+                    console.error(error);
+                    message.reply('An error occurred while saving the image.');
+                });
+            } else {
+                await message.reply('An error occurred.');
+            }
+        } catch (error) {
+            console.error(error);
+            await message.reply('An error occurred.');
+        }
     }
-  },
-
-  onStart: async function ({ api, event, args, message }) {
-    const prompt = args.join(" ");
-    if (!prompt) {
-      message.reply("Add something baka.");
-      return;
-    }
-    message.reply("Please wait...⏳");
-
-    try {
-      const res = await axios.post(`https://rehatdesu.xyz/api/imagine/dalle?cookie=${cookie}&auth=${auth}&prompt=${encodeURIComponent(prompt)}`);
-      const data = res.data.results.images;
-
-      if (!data || data.length === 0) {
-        message.reply("Redirect failed! Most probably bad prompt.");
-        return;
-      }
-
-      const imgData = [];
-      for (let i = 0; i < Math.min(4, data.length); i++) {
-        const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
-        const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
-        await fs.outputFile(imgPath, imgResponse.data);
-        imgData.push(fs.createReadStream(imgPath));
-      }
-
-      await api.sendMessage({
-        attachment: imgData,
-      }, event.threadID, event.messageID);
-
-    } catch (error) {
-      console.error(error);
-      message.reply("Redirect failed! Most probably bad prompt.");
-    } finally {
-      await fs.remove(path.join(__dirname, 'cache'));
-    }
-  }
-}
+};
