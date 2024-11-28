@@ -3,7 +3,7 @@ module.exports = {
   config: {
     name: "prompt",
     version: "1.0",
-    author: "rehat--",
+    author: "vincenzo x rehat--",
     countDown: 5,
     role: 0,
     guide: { en: "{pn} <prompt>" },
@@ -30,12 +30,12 @@ module.exports = {
       }
 
       if (imageUrl) {
-        const response = await axios.post(`https://rehatdesu.xyz/api/imagine/i2p?url=${encodeURIComponent(imageUrl)}&apikey=rimon`);
+        const response = await axios.post(`https://rehatdesu.xyz/api/imagine/i2p?url=${encodeURIComponent(imageUrl)}&apikey=rehatdiag84`);
         const description = response.data.result;
 
         await message.reply(description);
       } else if (khankirChele) {
-        const response = await axios.get(`https://rehatdesu.xyz/api/imagine/t2p?text=${encodeURIComponent(khankirChele)}&apikey=rimon`);
+        const response = await axios.get(`https://rehatdesu.xyz/api/imagine/t2p?text=${encodeURIComponent(khankirChele)}&apikey=rehatdiag84`);
         const prompt = response.data.response;
         await message.reply(prompt);
       }
