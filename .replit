@@ -1,7 +1,7 @@
 const axios = require('axios');
 module.exports = {
   config: {
-    name: "prompt",
+    name: "prompt3",
     version: "1.0",
     author: "vincenzo x rehat--",
     countDown: 5,
