@@ -1,190 +1,102 @@
-const axios = require("axios");
 const fs = require("fs");
-const yts = require("yt-search");
 const path = require("path");
-const cacheDir = path.join(__dirname, "/cache");
-const tmp = path.join(__dirname, "/tmp");
+const axios = require("axios");
+const { createCanvas, loadImage } = require("canvas");
 
-module.exports = {
- config: {
- name: "ytb",
- version: "1.2",
- aliases: ["ytb"],
- author: "Team Calyx",
- countDown: 5,
- role: 0,
- description: {
- en: "Search and download video from YouTube with options for audio or video",
- },
- category: "media",
- guide: {
- en: "{pn} [-a] [-v] <search term>: search YouTube and download selected video or audio",
- },
- },
-
- onStart: async ({ api, args, event }) => {
- if (args.length < 2) {
- return api.sendMessage("❌ Please use the format '/ytb [-a] [-v] <search term>'.", event.threadID, event.messageID);
- }
-
- const isAudio = args[0] === "-a";
- const isVideo = args[0] === "-v";
- const searchTerm = isAudio || isVideo ? args.slice(1).join(" ") : args.join(" ");
-
- if (!isAudio && !isVideo) {
- return api.sendMessage("❌ Please specify either '-a' for audio or '-v' for video.", event.threadID, event.messageID);
- }
-
- try {
- const searchResults = await yts(searchTerm);
- const videos = searchResults.videos.slice(0, 6);
-
- if (videos.length === 0) {
- return api.sendMessage(`⭕ No results found for: ${searchTerm}`, event.threadID, event.messageID);
- }
-
- let msg = "";
- videos.forEach((video, index) => {
- msg += `${index + 1}. ${video.title}\nDuration: ${video.timestamp}\nChannel: ${video.author.name}\n\n`;
- });
-
- api.sendMessage(
- {
- body: msg + "Reply with a number to select.",
- attachment: await Promise.all(videos.map(video => fahimcalyx(video.thumbnail, path.join(tmp, `thumbnail_${video.videoId}.jpg`)))),
- },
- event.threadID,
- (err, info) => {
- global.GoatBot.onReply.set(info.messageID, {
- commandName: "ytb",
- messageID: info.messageID,
- author: event.senderID,
- videos,
- isAudio,
- isVideo
- });
- },
- event.messageID
- );
- } catch (error) {
- console.error(error);
- return api.sendMessage("❌ Failed to search YouTube.", event.threadID, event.messageID);
- }
- },
-
- onReply: async ({ event, api, Reply }) => {
- await api.unsendMessage(Reply.messageID);
- api.setMessageReaction("⏳", event.messageID, () => {}, true);
-
- const choice = parseInt(event.body);
- if (isNaN(choice) || choice <= 0 || choice > Reply.videos.length) {
- return api.sendMessage("❌ Please enter a valid number.", event.threadID, event.messageID);
- }
-
- const selectedVideo = Reply.videos[choice - 1];
- const videoUrl = selectedVideo.url;
- console.log(videoUrl);
-
- try {
- let downloadUrl;
-
- // API Endpoint to fetch the download URL based on audio/video type
- const downloadUrlEndpoint = `http://152.42.220.111:25744/youtube?link=${encodeURIComponent(videoUrl)}`;
- const respo = await axios.get(downloadUrlEndpoint);
-
- // Determine the correct download URL based on flag
- if (Reply.isAudio) {
- downloadUrl = respo.data.download_links.find(link => link.type === "audio")?.audio_url;
- } else if (Reply.isVideo) {
- downloadUrl = respo.data.download_links.find(link => link.type === "video")?.video_url;
- }
-
- if (!downloadUrl) {
- return api.sendMessage("❌ Could not retrieve a valid file. Please try again with a different selection.", event.threadID, event.messageID);
- }
-
- console.log("Download URL:", downloadUrl);
- const totalSize = await getTotalSize(downloadUrl);
-
- const filePath = path.join(cacheDir, `ytb_${Reply.isAudio ? "audio" : "video"}_${selectedVideo.videoId}.${Reply.isAudio ? "mp3" : "mp4"}`);
- await downloadFileParallel(downloadUrl, filePath, totalSize, 5);
-
- api.setMessageReaction("✅", event.messageID, () => {}, true);
- await api.sendMessage(
- {
- body: `📥 ${Reply.isAudio ? "Audio" : "Video"} download successful:\n• Title: ${selectedVideo.title}\n• Channel: ${selectedVideo.author.name}`,
- attachment: fs.createReadStream(filePath),
- },
- event.threadID,
- () => fs.unlinkSync(filePath),
- event.messageID
- );
- } catch (e) {
- console.error(e);
- return api.sendMessage("❌ Failed to download.", event.threadID, event.messageID);
- }
- },
+const aspectRatioMap = {
+    '1:1': { width: 1024, height: 1024 },
+    '9:7': { width: 1152, height: 896 },
+    '7:9': { width: 896, height: 1152 },
+    '19:13': { width: 1216, height: 832 },
+    '13:19': { width: 832, height: 1216 },
+    '7:4': { width: 1344, height: 768 },
+    '4:7': { width: 768, height: 1344 },
+    '12:5': { width: 1500, height: 625 },
+    '5:12': { width: 640, height: 1530 },
+    '16:9': { width: 1344, height: 756 },
+    '9:16': { width: 756, height: 1344 },
+    '2:3': { width: 768, height: 1152 },
+    '3:2': { width: 1152, height: 768 }
 };
 
-async function fahimcalyx(url, pathName) {
- try {
- const response = await axios.get(url, { responseType: "stream" });
- response.data.pipe(fs.createWriteStream(pathName));
- return new Promise((resolve) => {
- response.data.on("end", () => resolve(fs.createReadStream(pathName)));
- });
- } catch (error) {
- console.error(error);
- return null;
- }
-}
+const styleMap = {
+    "1": "masterpiece, best quality, very aesthetic, absurdres, cinematic still, emotional, harmonious, vignette, highly detailed, high budget, bokeh, cinemascope, moody, epic, gorgeous, film grain, grainy",
+    "2": "masterpiece, best quality, very aesthetic, absurdres, cinematic photo, 35mm photograph, film, bokeh, professional, 4k, highly detailed",
+    "3": "masterpiece, best quality, very aesthetic, absurdres, anime artwork, anime style, key visual, vibrant, studio anime, highly detailed",
+    "4": "masterpiece, best quality, very aesthetic, absurdres, manga style, vibrant, high-energy, detailed, iconic, Japanese comic style",
+    "5": "masterpiece, best quality, very aesthetic, absurdres, concept art, digital artwork, illustrative, painterly, matte painting, highly detailed",
+    "6": "masterpiece, best quality, very aesthetic, absurdres, pixel-art, low-res, blocky, pixel art style, 8-bit graphics",
+    "7": "masterpiece, best quality, very aesthetic, absurdres, ethereal fantasy concept art, magnificent, celestial, ethereal, painterly, epic, majestic, magical, fantasy art, cover art, dreamy",
+    "8": "masterpiece, best quality, very aesthetic, absurdres, neonpunk style, cyberpunk, vaporwave, neon, vibes, vibrant, stunningly beautiful, crisp, detailed, sleek, ultramodern, magenta highlights, dark purple shadows, high contrast, cinematic, ultra detailed, intricate, professional",
+    "9": "masterpiece, best quality, very aesthetic, absurdres, professional 3d model, octane render, highly detailed, volumetric, dramatic lighting"
+};
 
-async function getTotalSize(url) {
- const response = await axios.head(url);
- return parseInt(response.headers["content-length"], 10);
-}
+module.exports = {
+    config: {
+        name: "djourney",
+        aliases: ["dj"],
+        author: "Vincenzo & MarianCross",
+        version: "1.1",
+        cooldowns: 5,
+        role: 0,
+        shortDescription: "Generate anime images powered by stable diffusion.",
+        longDescription: "Generates four images based on a prompt and allows the user to select one using U1, U2, U3, or U4.",
+        category: "AI",
+        guide: "{p}projourney <prompt> [--ar <ratio>] [--s <style>]"
+    },
 
-async function downloadFileParallel(url, filePath, totalSize, numChunks) {
- const chunkSize = Math.ceil(totalSize / numChunks);
- const chunks = [];
+    onStart: async function ({ message, args, api, event }) {
+        const userID = event.senderID;
+        const waitingMessage = await message.reply(`Djourney is Processing your request (${userID})🚀`);
 
- async function downloadChunk(url, start, end, index) {
- console.log(`Starting chunk ${index + 1}/${numChunks}: bytes ${start}-${end}`);
- try {
- const response = await axios.get(url, {
- headers: { Range: `bytes=${start}-${end}` },
- responseType: "arraybuffer",
- });
- console.log(`Chunk ${index + 1} downloaded.`);
- return response.data;
- } catch (error) {
- console.error(`Error downloading chunk ${index + 1}:`, error);
- throw error;
- }
- }
+        const startTime = Date.now();
+        try {
+            let prompt = "";
+            let ratio = "1:1";
+            let style = "";
 
- for (let i = 0; i < numChunks; i++) {
- const start = i * chunkSize;
- const end = Math.min(start + chunkSize - 1, totalSize - 1);
- chunks.push(downloadChunk(url, start, end, i));
- }
+            // Parsing arguments
+            for (let i = 0; i < args.length; i++) {
+                if (args[i] === "--ar" && args[i + 1]) {
+                    ratio = args[i + 1];
+                    i++;
+                } else if (args[i] === "--s" && args[i + 1]) {
+                    style = args[i + 1];
+                    i++;
+                } else {
+                    prompt += args[i] + " ";
+                }
+            }
 
- try {
- const buffers = await Promise.all(chunks);
+            prompt = prompt.trim();
+            const urls = [
+                `https://vincenzo-jin-xq8e.onrender.com/illus/gen`,
+                `https://vincenzo-jin-xq8e.onrender.com/illus/gen`,
+                `https://vincenzo-jin-xq8e.onrender.com/illus/gen`,
+                `https://vincenzo-jin-xq8e.onrender.com/illus/gen`
+            ];
+            const params = { prompt, style, ratio };
+            const cacheFolderPath = path.join(__dirname, "/tmp");
 
- const fileStream = fs.createWriteStream(filePath);
- for (const buffer of buffers) {
- fileStream.write(Buffer.from(buffer));
- }
+            if (!fs.existsSync(cacheFolderPath)) {
+                fs.mkdirSync(cacheFolderPath);
+            }
 
- await new Promise((resolve, reject) => {
- fileStream.on("finish", resolve);
- fileStream.on("error", reject);
- fileStream.end();
- });
+            const imagePromises = urls.map((url) => axios.get(url, { params }));
+            const responses = await Promise.all(imagePromises);
 
- console.log("Download successful.");
- } catch (error) {
- console.error("Error downloading or writing the file:", error);
- }
-}
+            const images = await Promise.all(
+                responses.map(async (response, index) => {
+                    const imageURL = response.data.imageUrl;
+                    const imagePath = path.join(cacheFolderPath, `niji5_${index + 1}.jpg`);
+                    const writer = fs.createWriteStream(imagePath);
+
+                    const imageResponse = await axios({
+                        url: imageURL,
+                        method: "GET",
+                        responseType: "stream"
+                    });
+
+                    imageResponse.data.pipe(writer);
+                    await new Promise((resolve, reject) => {
+                        wr
